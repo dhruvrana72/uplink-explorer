@@ -1,0 +1,38 @@
+*.py[cod]
+*.sw[po]
+.cache
+
+# Packages
+*.egg
+*.egg-info
+.eggs
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+tests/.cache
+
+# Sphinx
+docs/_build
+
+Procfile
+
+# database
+*.db
+{DATABASE}
+tags
+migrations/**
