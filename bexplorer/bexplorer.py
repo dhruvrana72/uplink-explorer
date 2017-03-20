@@ -8,10 +8,12 @@ import random
 # from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
+from matrix.session import MatrixSession
 
 # set app
 app = Flask(__name__)
-
+matrix = MatrixSession()
+matrix.init_app(app)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(

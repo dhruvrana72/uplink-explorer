@@ -1,4 +1,5 @@
 FROM ubuntu
+
 RUN apt-get update && apt-get -y -q install \
 python-pip \
 python-dev build-essential \
@@ -13,8 +14,8 @@ WORKDIR /bexplorer
 
 # Python requirements
 COPY requirements.txt .
-
 RUN pip install -r requirements.txt --src /usr/local/src
 
 EXPOSE 5000
-CMD ["python run.py server"] --port 5000
+EXPOSE 8545
+CMD ["./runner"] --port 5000
