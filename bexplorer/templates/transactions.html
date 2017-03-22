@@ -1,5 +1,4 @@
- {% extends "layout.html" %} {% block body %}
-
+{% extends "layout.html" %} {% block body %}
 <main class="mdl-layout__content">
     <div class="page-content">
         <br>
@@ -17,7 +16,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for block in blockset %}
+                        {% for tx in transactions %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | safe }}</td>
                             <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp |datetimeformat}} </td>
@@ -37,26 +36,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mdl-cell mdl-cell--4-col">
-                <div class="demo-card-wide mdl-card mdl-shadow--2dp">
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Community Edition</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Welcome to the Block Explorer. This is a simple application to allow you to interact with blocks and transactions on the Matrix testnet.
 
-                    </div>
-                    <div class="mdl-card__menu">
-                        <a href="http://github.com/adjoint-io" target="_blank" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                            <i class="material-icons">code</i>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
         </div>
 
     </div>
 </main>
-
 {% endblock %}

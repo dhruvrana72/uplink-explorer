@@ -5,7 +5,7 @@ import os
 import json
 import random
 from jinja2 import Environment, FileSystemLoader
-from flask import Flask, request, session, g, redirect, \
+from flask import Flask, request, session, g, redirect, render_template, \
     url_for, abort, flash, jsonify
 from matrix.session import MatrixSession
 
@@ -31,68 +31,52 @@ app.config.update(dict(
 app.config.from_envvar('APP_SETTINGS', silent=True)
 
 
+def handle_results(res):
+    """Handles succesful or failed results of server communication"""
+
+    if res['tag'] is ERROR:
+        results = json.load(res)
+        print results._data.errorType
+        print results._data.errorMsg
+        error = '{} : {}'.format(
+            results._data.errorType, results._data.errorMsg)
+        flash(error)
+        results = error
+    else:
+        jsonified = jsonify(res)
+        loaded = json.loads(jsonified.data)
+        results = loaded['_data']
+
+    return results
+
+
+@app.template_filter('datetimeformat')
 def datetimeformat(unix_timestamp):
-    '''Filter for converting unix time to human readable'''
+    """Filter for converting unix time to human readable"""
     return time.strftime('%m/%d/%Y, %I:%M %p', time.localtime(unix_timestamp))
-
-
-def render_template(template=None, **kwargs):
-    '''
-        render template and set environment filters
-    '''
-    # set root and template directory paths
-    ROOT = os.path.abspath(os.path.dirname(__file__))
-    TEMPLATES_DIR = os.path.join(ROOT, 'templates')
-
-    env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
-
-    # Adding filters to enviroment to make them visible in the template
-    env.filters['datetimeformat'] = datetimeformat
-
-    template_file = env.get_template(template)
-    rendered_template = template_file.render(**kwargs)
-
-    return rendered_template
 
 
 @app.route('/', methods=['GET', 'POST'])
 def show_index():
-    """
-        Main Index Page
-    """
+    """Main Index Page"""
+
     # BLOCKS
     res = matrix.blocks()
-
-    if res['tag'] is ERROR:
-        results = json.load(res)
-        print results._data.errorType
-        print results._data.errorMsg
-        # default blockset
-        blockset = [{
-            'header': {
-                'timestamp': 1490101944,
-                'origin': '0x123',
-                'prevBlock': '0x321',
-                'merkleRoot': '0x000'
-            },
-            'transactions': [],
-        }]
-    else:
-        results = jsonify(res)
-        loaded = json.loads(results.data, encoding='utf-8')
-        blockset = loaded['_data']
+    blockset = handle_results(res)
 
     # PEERS
     res = matrix.peers()
-
-    if res['tag'] is ERROR:
-        results = json.load(res)
-        print results._data.errorType
-        print results._data.errorMsg
-        peers = 0
-    else:
-        results = jsonify(res)
-        loaded = json.loads(results.data)
-        peers = len(loaded['_data'])
+    results = handle_results(res)
+    peers = len(results)
 
     return render_template('index.html', blockset=blockset, peers=peers)
+
+
+@app.route('/transactions', methods=['GET', 'POST'])
+def show_transactions():
+    """Present a table of transactions"""
+
+    res = matrix.transactions()
+    transactions = handle_results(res)
+
+    return render_template('transactions.html', transactions=transactions)

@@ -3,14 +3,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
 <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
 <!-- Always shows a header, even in smaller screens. -->
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
             <!-- Title -->
-            <span class="mdl-layout-title">Adjoint Community: Block Explorer &nbsp;</span>
+            <span class="mdl-layout-title">Block Explorer &nbsp;</span>
             <span class="mdl-chip mdl-chip--contact">
             <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">{{peers}}</span>
             <span id="peer" class="mdl-chip__text">Peer Count</span>
@@ -30,7 +30,7 @@
         </div>
     </header>
     <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Adjoint Community: Block Explorer</span>
+        <span class="mdl-layout-title">Block Explorer</span>
         <nav class="mdl-navigation">
             <a class="mdl-navigation__link" href="">Adjoint</a>
             <a class="mdl-navigation__link" href="">Adjoint Enterprise</a>
@@ -38,5 +38,9 @@
             <a class="mdl-navigation__link" href="">Github</a>
         </nav>
     </div>
-    {% block body %}{% endblock %}
+
+
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %} {% block body %}{% endblock %}
 </div>

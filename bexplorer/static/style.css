@@ -1,1 +1,11 @@
 /*Custom Styles Here*/
+
+.demo-card-wide.mdl-card {
+    width: 512px;
+}
+
+.demo-card-wide>.mdl-card__title {
+    color: #333;
+    height: 176px;
+    background: url('teaser.png') center / cover;
+}

@@ -42,3 +42,7 @@ class MatrixSession(object):
     def peers(self):
         peers = self.conn.matrix_peers()
         return peers
+
+    def transactions(self, block_id=0):
+        transactions = self.conn.matrix_transactions(block_id)
+        return transactions
