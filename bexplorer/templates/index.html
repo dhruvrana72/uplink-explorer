@@ -1,72 +1,45 @@
  {% extends "layout.html" %} {% block body %}
 
-<!-- Always shows a header, even in smaller screens. -->
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row">
-            <!-- Title -->
-            <span class="mdl-layout-title">Adjoint Community: Block Explorer</span>
-            <!-- Add spacer, to align navigation to the right -->
-            <div class="mdl-layout-spacer"></div>
-            <!-- Navigation. We hide it in small screens. -->
-            <nav class="mdl-navigation mdl-layout--large-screen-only">
-                <a class="mdl-navigation__link" href="">Adjoint</a>
-                <a class="mdl-navigation__link" href="">Adjoint Enterprise</a>
-                <a class="mdl-navigation__link" href="">Documentation</a>
-                <a class="mdl-navigation__link" href="">Github</a>
-            </nav>
-        </div>
-    </header>
-    <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Adjoint Community: Block Explorer</span>
-        <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="">Adjoint</a>
-            <a class="mdl-navigation__link" href="">Adjoint Enterprise</a>
-            <a class="mdl-navigation__link" href="">Documentation</a>
-            <a class="mdl-navigation__link" href="">Github</a>
-        </nav>
-    </div>
-    <main class="mdl-layout__content">
-        <div class="page-content">
+<main class="mdl-layout__content">
+    <div class="page-content">
+        <br>
 
-            <div class="mdl-grid">
-                <div class="mdl-cell mdl-cell--4-col"></div>
-                <div class="mui-col-md-5">
-                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-                        <thead>
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
-                                <th class="mdl-data-table__cell--non-numeric">Origin</th>
-                                <th class="mdl-data-table__cell--non-numeric">prevBlock</th>
-                                <th class="mdl-data-table__cell--non-numeric">merkleRoot</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for block in blockset %}
-                            <tr>
-                                <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp}}</td>
-                                <td class="mdl-data-table__cell--non-numeric">{{block.header.origin | safe }}</td>
-                                <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
-                                <td class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | safe }}</td>
-                                <td><a class="mui-btn mui-btn--small mui-btn--primary mui-btn--flat">Get Transactions</a></td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td class="mdl-data-table__cell--non-numeric">Nothing Yet</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--4-col">
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">merkleRoot</th>
+                            <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                            <th class="mdl-data-table__cell--non-numeric">Origin</th>
+                            <th class="mdl-data-table__cell--non-numeric">prevBlock</th>
+                            <th class="mdl-data-table__cell--non-numeric">Transactions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for block in blockset %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | safe }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp |datetimeformat}} </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{block.header.origin | safe }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
+                            <td>
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                                    <i class="material-icons">pageview</i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
         </div>
-    </main>
-</div>
 
-
-
-
-
+    </div>
+</main>
 
 {% endblock %}

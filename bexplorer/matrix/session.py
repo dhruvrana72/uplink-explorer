@@ -32,10 +32,13 @@ class MatrixSession(object):
     def _connect(self, app):
         print(self.addr, self.port)
         self.conn = MatrixJsonRpc(self.addr, self.port)
-        # self.base = self.conn.matrix_coinbase()
         # cache = [self.block(i) for i in range(0,100)]
 
     def blocks(self, count=1):
         blockset = self.conn.matrix_blocks(count)
         # print blockset
         return blockset
+
+    def peers(self):
+        peers = self.conn.matrix_peers()
+        return peers
