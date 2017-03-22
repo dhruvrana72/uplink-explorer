@@ -1,4 +1,4 @@
-{% extends "layout.html" %} {% block body %}
+ {% extends "layout.html" %} {% block body %}
 
 <!-- Always shows a header, even in smaller screens. -->
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
@@ -31,36 +31,33 @@
 
             <div class="mdl-grid">
                 <div class="mdl-cell mdl-cell--4-col"></div>
-                <div class="mdl-cell mdl-cell--4-col">
+                <div class="mui-col-md-5">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
                         <thead>
                             <tr>
-                                <th class="mdl-data-table__cell--non-numeric">Material</th>
-                                <th>Quantity</th>
-                                <th>Unit price</th>
+                                <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                                <th class="mdl-data-table__cell--non-numeric">Origin</th>
+                                <th class="mdl-data-table__cell--non-numeric">prevBlock</th>
+                                <th class="mdl-data-table__cell--non-numeric">merkleRoot</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for block in blockset %}
                             <tr>
-                                <td class="mdl-data-table__cell--non-numeric">Acrylic (Transparent)</td>
-                                <td>25</td>
-                                <td>$2.90</td>
+                                <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp}}</td>
+                                <td class="mdl-data-table__cell--non-numeric">{{block.header.origin | safe }}</td>
+                                <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
+                                <td class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | safe }}</td>
+                                <td><a class="mui-btn mui-btn--small mui-btn--primary mui-btn--flat">Get Transactions</a></td>
                             </tr>
+                            {% else %}
                             <tr>
-                                <td class="mdl-data-table__cell--non-numeric">Plywood (Birch)</td>
-                                <td>50</td>
-                                <td>$1.25</td>
+                                <td class="mdl-data-table__cell--non-numeric">Nothing Yet</td>
                             </tr>
-                            <tr>
-                                <td class="mdl-data-table__cell--non-numeric">Laminate (Gold on Blue)</td>
-                                <td>10</td>
-                                <td>$2.35</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
-
                 </div>
-                <div class="mdl-cell mdl-cell--4-col"></div>
             </div>
 
         </div>

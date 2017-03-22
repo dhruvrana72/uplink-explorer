@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 import itertools
 from .client import MatrixJsonRpc
-
-# from flask import current_app
-
 from functools32 import lru_cache
-
-# Logging system
 
 
 class MatrixSession(object):
+    """
+      JSON RPC session instance
+    """
 
     def __init__(self, addr=None, port=None):
         self.addr = addr or '127.0.0.1'
@@ -19,9 +17,11 @@ class MatrixSession(object):
         self.app = None
 
     def init_app(self, app):
+        """Connect application instance to matrix session"""
+
         app.extensions = getattr(app, 'extensions', {})
         self.app = app
-        self.app.logger.info("Initialized Adjoint Matrix rpc")
+        # self.app.logger.info("Initialized Adjoint Matrix rpc")
 
         if app.config['TESTING'] is False:
             self._connect(app)
@@ -34,3 +34,8 @@ class MatrixSession(object):
         self.conn = MatrixJsonRpc(self.addr, self.port)
         # self.base = self.conn.matrix_coinbase()
         # cache = [self.block(i) for i in range(0,100)]
+
+    def blocks(self, count=1):
+        blockset = self.conn.matrix_blocks(count)
+        # print blockset
+        return blockset

@@ -6,7 +6,7 @@ import time
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
-#from .utils import hex_to_dec, validate_block
+# from .utils import hex_to_dec, validate_block
 from bexplorer.matrix.exceptions import (RpcConnectionFail, BadStatusCodeError, BadJsonError,
                                          BadResponseError)
 
@@ -14,16 +14,21 @@ MATRIX_PORT = 8545
 
 
 class MatrixJsonRpc(object):
+    """
+      JSON RPC For Matrix
+    """
 
-    def __init__(self, host='localhost', port=MATRIX_PORT, tls=False):
+    def __init__(self, host='localhost', port=MATRIX_PORT, tls=False, endpoint=None):
         self.host = host
         self.port = port
+        self.endpoint = endpoint
         self.tls = tls
-        self.block = None
+        self.blocks = None
 
-    def _call(self, method, params=None, _id=1):
-        logging.info("RPC call")
-
+    def _call(self, method, params=None, _id=1, endpoint=None):
+        print 'RPC Call'
+        # logging.info("RPC call")
+        self.endpoint = endpoint
         params = params or []
         data = {
             'jsonrpc': '2.0',
@@ -34,8 +39,12 @@ class MatrixJsonRpc(object):
         scheme = 'http'
         if self.tls:
             scheme += 's'
-        url = '{}://{}:{}'.format(scheme, self.host, self.port)
-        #print(url, data)
+        if self.endpoint is None:
+            url = '{}://{}:{}'.format(scheme, self.host, self.port)
+        else:
+            url = '{}://{}:{}/{}'.format(scheme, self.host,
+                                         self.port, self.endpoint)
+        print(url, data)
 
         try:
             req = requests.post(url, data=json.dumps(data))
@@ -46,12 +55,18 @@ class MatrixJsonRpc(object):
         try:
             response = req.json()
         except ValueError:
-            raise BadJsonError(req.text)
+            raise BadJsonError(req.error)
         try:
-            return response['result']
+            return response
         except KeyError:
             raise BadResponseError(response)
 
-    def blocks(self, count=1):
-        """List of blocks and transactions"""
-        return map(self.block, [i for i in range(0, count)])
+    def matrix_blocks(self, count=1):
+        """
+          Get a list of blocks and transactions
+        """
+
+        self.blocks = self._call('GET', endpoint='blocks')
+        print self.blocks
+        return self.blocks
+        # return map(self.blocks, [i for i in range(0, count)])

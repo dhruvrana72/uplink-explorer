@@ -2,9 +2,10 @@
 <title>Block Explorer</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script src="//cdn.muicss.com/mui-0.9.12/extra/mui-combined.min.js"></script>
 
 <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<!--<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">-->
 
 <div class="page">
     {% for message in get_flashed_messages() %}
