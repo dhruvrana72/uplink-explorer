@@ -108,3 +108,12 @@ def show_assets():
     assets = handle_results(res)
 
     return render_template('assets.html', assets=assets)
+
+
+@app.route('/contracts', methods=['GET', 'POST'])
+def show_contracts():
+    """Present a table of contracts"""
+    res = matrix.contracts()
+    contracts = handle_results(res)
+
+    return render_template('contracts.html', contracts=contracts)

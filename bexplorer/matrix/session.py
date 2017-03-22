@@ -54,3 +54,7 @@ class MatrixSession(object):
     def assets(self):
         assets = self.conn.matrix_assets()
         return assets
+
+    def contracts(self):
+        contracts = self.conn.matrix_contracts()
+        return contracts
