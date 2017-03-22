@@ -75,8 +75,9 @@ def show_index():
 @app.route('/transactions', methods=['GET', 'POST'])
 def show_transactions():
     """Present a table of transactions"""
+    block_id = request.form['submit']
 
-    res = matrix.transactions()
+    res = matrix.transactions(block_id)
     transactions = handle_results(res)
 
     return render_template('transactions.html', transactions=transactions)

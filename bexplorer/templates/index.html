@@ -24,9 +24,11 @@
                             <td class="mdl-data-table__cell--non-numeric">{{block.header.origin | safe }}</td>
                             <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
                             <td>
-                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                                <form action="{{ url_for('show_transactions') }}" method="post">
+                                    <button type="submit" name="submit" value="{{block.index}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                     <i class="material-icons">pageview</i>
-                                </button>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% else %}

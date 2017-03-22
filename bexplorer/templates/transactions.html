@@ -8,25 +8,18 @@
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
-                            <th class="mdl-data-table__cell--non-numeric">Merkle Root</th>
                             <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
-                            <th class="mdl-data-table__cell--non-numeric">Origin</th>
-                            <th class="mdl-data-table__cell--non-numeric">Previous Block</th>
-                            <th class="mdl-data-table__cell--non-numeric">Transactions</th>
+                            <th class="mdl-data-table__cell--non-numeric">From Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">From Public Key</th>
+                            <th class="mdl-data-table__cell--non-numeric">Transaction Type</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for tx in transactions %}
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | safe }}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp |datetimeformat}} </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.origin | safe }}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
-                            <td>
-                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-                                    <i class="material-icons">pageview</i>
-                                </button>
-                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{tx.timestamp | datetimeformat}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{tx.from | safe}} </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{tx.fromPub | safe}}</td>
                         </tr>
                         {% else %}
                         <tr>
