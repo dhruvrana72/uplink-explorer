@@ -46,3 +46,11 @@ class MatrixSession(object):
     def transactions(self, block_id=0):
         transactions = self.conn.matrix_transactions(block_id)
         return transactions
+
+    def accounts(self):
+        accounts = self.conn.matrix_accounts()
+        return accounts
+
+    def assets(self):
+        assets = self.conn.matrix_assets()
+        return assets

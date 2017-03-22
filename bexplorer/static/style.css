@@ -9,3 +9,7 @@
     height: 176px;
     background: url('teaser.png') center / cover;
 }
+
+.mdl-tooltip {
+    max-width: 1000px !important;
+}

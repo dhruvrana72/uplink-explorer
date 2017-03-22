@@ -1,0 +1,36 @@
+{% extends "layout.html" %} {% block body %}
+<main class="mdl-layout__content">
+    <div class="page-content">
+        <br>
+
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--8-col">
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Public Key</th>
+                            <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">Timezone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for addr in addresses %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">{{addr.publicKey}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{addr.address}} </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{addr.timezone}}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+{% endblock %}

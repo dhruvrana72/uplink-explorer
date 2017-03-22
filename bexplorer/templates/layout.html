@@ -32,13 +32,11 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Block Explorer</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="">Adjoint</a>
-            <a class="mdl-navigation__link" href="">Adjoint Enterprise</a>
-            <a class="mdl-navigation__link" href="">Documentation</a>
-            <a class="mdl-navigation__link" href="">Github</a>
+            <a class="mdl-navigation__link" href="/">Blocks</a>
+            <a class="mdl-navigation__link" href="/accounts">Accounts</a>
+            <a class="mdl-navigation__link" href="/assets">Assets</a>
         </nav>
     </div>
-
 
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>

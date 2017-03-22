@@ -5,6 +5,9 @@
         <br>
 
         <div class="mdl-grid">
+
+
+
             <div class="mdl-cell mdl-cell--8-col">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
@@ -19,15 +22,26 @@
                     <tbody>
                         {% for block in blockset %}
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | safe }}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp |datetimeformat}} </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.origin | safe }}</td>
+                            <td id="{{block.header.merkleRoot | shorten }}" class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | shorten }}
+                                <div class="mdl-tooltip" data-mdl-for="{{block.header.merkleRoot | shorten}}">
+                                    {{block.header.merkleRoot}}
+                                </div>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{block.header.timestamp | datetimeformat}}</td>
+                            <td id="{{block.header.origin | shorten}}" class="mdl-data-table__cell--non-numeric">{{block.header.origin | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{block.header.origin | shorten}}">
+                                    {{block.header.origin}}
+                                </div>
+                            </td>
                             <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
                             <td>
                                 <form action="{{ url_for('show_transactions') }}" method="post">
-                                    <button type="submit" name="submit" value="{{block.index}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                                    <button id="{{'trans {}'.format(block.index)}}" type="submit" name="submit" value="{{block.index}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                     <i class="material-icons">pageview</i>
                                     </button>
+                                    <div class="mdl-tooltip" data-mdl-for="{{'trans {}'.format(block.index)}}">
+                                        See transactions in block
+                                    </div>
                                 </form>
                             </td>
                         </tr>

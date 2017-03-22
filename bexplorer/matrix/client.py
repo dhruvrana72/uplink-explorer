@@ -25,7 +25,9 @@ class MatrixJsonRpc(object):
         self.tls = tls
         self.blocks = None
         self.peers = None
+        self.accounts = None
         self.transactions = None
+        self.assets = None
 
     def _call(self, method, params=None, endpoint=None):
         print 'RPC Call'
@@ -67,7 +69,7 @@ class MatrixJsonRpc(object):
         """
 
         self.blocks = self._call('GET', endpoint='blocks')
-        # print self.blocks
+        print self.blocks
         return self.blocks
 
     def matrix_peers(self):
@@ -75,6 +77,7 @@ class MatrixJsonRpc(object):
           Get a list of peers and return number of peers
         """
         self.peers = self._call('GET', endpoint='peers')
+        print self.peers
         return self.peers
 
     def matrix_transactions(self, block_id=0):
@@ -83,3 +86,17 @@ class MatrixJsonRpc(object):
         """
         self.transactions = self._call('GET', endpoint='transactions')
         return self.transactions
+
+    def matrix_accounts(self):
+        """
+          Get a list of accounts
+        """
+        self.accounts = self._call('GET', endpoint='accounts')
+        return self.accounts
+
+    def matrix_assets(self):
+        """
+          Get a list of assets
+        """
+        self.assets = self._call('GET', endpoint='assets')
+        return self.assets

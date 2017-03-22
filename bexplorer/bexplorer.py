@@ -31,6 +31,21 @@ app.config.update(dict(
 app.config.from_envvar('APP_SETTINGS', silent=True)
 
 
+@app.template_filter('shorten')
+def shorten(string):
+    print string
+    if string:
+        return string[0:10]
+    else:
+        return ''
+
+
+@app.template_filter('datetimeformat')
+def datetimeformat(unix_timestamp):
+    """Filter for converting unix time to human readable"""
+    return time.strftime('%m/%d/%Y, %I:%M %p', time.localtime(unix_timestamp))
+
+
 def handle_results(res):
     """Handles succesful or failed results of server communication"""
 
@@ -48,12 +63,6 @@ def handle_results(res):
         results = loaded['_data']
 
     return results
-
-
-@app.template_filter('datetimeformat')
-def datetimeformat(unix_timestamp):
-    """Filter for converting unix time to human readable"""
-    return time.strftime('%m/%d/%Y, %I:%M %p', time.localtime(unix_timestamp))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -81,3 +90,21 @@ def show_transactions():
     transactions = handle_results(res)
 
     return render_template('transactions.html', transactions=transactions)
+
+
+@app.route('/accounts', methods=['GET', 'POST'])
+def show_accounts():
+    """Present a table of accounts"""
+    res = matrix.accounts()
+    accounts = handle_results(res)
+
+    return render_template('accounts.html', accounts=accounts)
+
+
+@app.route('/assets', methods=['GET', 'POST'])
+def show_assets():
+    """Present a table of assets"""
+    res = matrix.assets()
+    assets = handle_results(res)
+
+    return render_template('assets.html', assets=assets)
