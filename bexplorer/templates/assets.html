@@ -33,7 +33,7 @@
                             <td class="mdl-data-table__cell--non-numeric">{{ass.asset.issuer | shorten}}</td>
 
                             <td class="mdl-data-table__cell--non-numeric">{{ass.asset.reference}}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ass.asset.assetType}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.asset.assetType.type}}</td>
                             <td>{{ass.asset.supply | convert(ass.asset.assetType)}}</td>
                             <td>{{ass.asset.issuedOn | datetimeformat}}</td>
                             <td class="">

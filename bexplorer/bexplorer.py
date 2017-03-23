@@ -66,14 +66,22 @@ def convert(value, atype):
         convert asset type fractional to fixed precision
         FPREC is 10^(-7) or 0.0000001
     """
+    # print '=================='
+    # print value, atype
+    # print '=================='
+
     if value:
-        if atype == 'Discrete':
+        if atype['type'] == 'Discrete':
             return value
-        if atype == 'Fractional':
+
+        if atype['type'] == 'Fractional':
+            # print '======FRAC VAL=======' 
+            # print value
             result = value * FPREC
             return result
-        if atype is 'Binary':
-            if value == 0:
+
+        if atype['type'] == 'Binary':
+            if value <= 0:
                 return 'not held'
             else:
                 return 'held'
@@ -187,6 +195,7 @@ def asset_holdings():
 def show_contracts():
     """Present a table of contracts"""
     res = matrix.contracts()
-    contracts = handle_results(res)
 
+    contracts = handle_results(res)
+    print contracts
     return render_template('contracts.html', contracts=contracts)

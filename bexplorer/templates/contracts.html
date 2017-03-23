@@ -9,12 +9,16 @@
                     <thead>
                         <tr>
                             <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">Script</th>
+                            <th class="mdl-data-table__cell--non-numeric">Storage</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for con in contracts %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">{{con.address}} </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{con.contract.script}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{con.contract.storage}}</td>
                         </tr>
                         {% else %}
                         <tr>

@@ -122,4 +122,5 @@ class MatrixJsonRpc(object):
           Get a list of contacts
         """
         self.contracts = self._call('GET', endpoint='contracts')
+        print self.contracts
         return self.contracts
