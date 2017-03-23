@@ -10,6 +10,16 @@
     background: url('teaser.png') center / cover;
 }
 
+.demo-card-square.mdl-card {
+    width: 100%;
+    min-height: 320px;
+}
+
+.demo-card-square>.mdl-card__title {
+    color: #333;
+    background: url('teaser.png') bottom left 0% no-repeat #46B6AC;
+}
+
 .mdl-tooltip {
-    max-width: 1000px !important;
+    max-width: 100% !important;
 }

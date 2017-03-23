@@ -51,6 +51,10 @@ class MatrixSession(object):
         accounts = self.conn.matrix_accounts()
         return accounts
 
+    def getaccount(self, address):
+        account = self.conn.matrix_getaccount(address)
+        return account
+
     def assets(self):
         assets = self.conn.matrix_assets()
         return assets

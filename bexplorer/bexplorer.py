@@ -16,9 +16,9 @@ matrix = MatrixSession(addr='54.163.224.249')
 matrix.init_app(app)
 
 # env = Environment(loader=FileSystemLoader('/templates'))
-
 RESPONSE = 'RPCResp'
 ERROR = 'RPCRespError'
+CUTLENGTH = 10  # length to shorten hashes
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
@@ -33,11 +33,43 @@ app.config.from_envvar('APP_SETTINGS', silent=True)
 
 @app.template_filter('shorten')
 def shorten(string):
+    """shorten addresses for readability"""
     print string
     if string:
-        return string[0:10]
+        return string[0:CUTLENGTH]
     else:
         return ''
+
+
+@app.template_filter('empl')
+def empl(string):
+    if string is 'Darren Tseng':
+        return 'Thomas Dietert'
+
+
+@app.template_filter('shorten_key')
+def shortkeys(string):
+    """shorten keys"""
+    if string:
+        return string[29:39]
+    else:
+        return ''
+
+
+@app.template_filter('peers')
+def peers(p):
+    """Peers filter"""
+    res = matrix.peers()
+    results = handle_results(res)
+    peers = len(results)
+
+    return peers
+
+
+@app.template_filter('to_pretty_json')
+def to_pretty_json(value):
+    return json.dumps(value, sort_keys=True,
+                      indent=4, separators=(',', ': '))
 
 
 @app.template_filter('datetimeformat')
@@ -48,13 +80,14 @@ def datetimeformat(unix_timestamp):
 
 def handle_results(res):
     """Handles succesful or failed results of server communication"""
-
-    if res['tag'] is ERROR:
+    # print "!!!!!!!!!!!!!!!!!!!!"
+    # print res
+    if res['tag'] == ERROR:
         results = json.load(res)
-        print results._data.errorType
-        print results._data.errorMsg
+        print results.contents.errorType
+        print results.contents.errorMsg
         error = '{} : {}'.format(
-            results._data.errorType, results._data.errorMsg)
+            results.contents.errorType, results.contents.errorMsg)
         flash(error)
         results = error
     else:
@@ -73,12 +106,7 @@ def show_index():
     res = matrix.blocks()
     blockset = handle_results(res)
 
-    # PEERS
-    res = matrix.peers()
-    results = handle_results(res)
-    peers = len(results)
-
-    return render_template('index.html', blockset=blockset, peers=peers)
+    return render_template('index.html', blockset=blockset)
 
 
 @app.route('/transactions', methods=['GET', 'POST'])
@@ -96,9 +124,24 @@ def show_transactions():
 def show_accounts():
     """Present a table of accounts"""
     res = matrix.accounts()
+    # print res
     accounts = handle_results(res)
 
     return render_template('accounts.html', accounts=accounts)
+
+
+@app.route('/accounts/address', methods=['GET', 'POST'])
+def account_by_address():
+    """present specific account metadata, lookup by address"""
+    address = request.form['submit']
+    res = matrix.getaccount(address)
+    print res
+    accinfo = handle_results(res)
+
+    res = matrix.accounts()
+    accounts = handle_results(res)
+
+    return render_template('accounts.html', accounts=accounts, accinfo=accinfo)
 
 
 @app.route('/assets', methods=['GET', 'POST'])

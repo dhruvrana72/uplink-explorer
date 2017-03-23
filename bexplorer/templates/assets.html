@@ -8,15 +8,23 @@
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
-                            <th class="mdl-data-table__cell--non-numeric">Issued</th>
-                            <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">Issuer</th>
+                            <th class="mdl-data-table__cell--non-numeric">Issued On</th>
+                            <th class="mdl-data-table__cell--non-numeric">Total Supply</th>
+                            <th class="mdl-data-table__cell--non-numeric">Reference</th>
+                            <th class="mdl-data-table__cell--non-numeric">Asset Type</th>
+                            <th class="mdl-data-table__cell--non-numeric">Holdings</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ass in assets %}
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">{{ass.issued}}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ass.address}} </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.issuer | shorten}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.issuedOn | datetimeformat}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.supply}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.reference}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.assetType}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">HOLDINGS</td>
                         </tr>
                         {% else %}
                         <tr>

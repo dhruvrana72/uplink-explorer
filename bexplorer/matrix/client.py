@@ -25,6 +25,7 @@ class MatrixJsonRpc(object):
         self.tls = tls
         self.blocks = None
         self.peers = None
+        self.account = None
         self.accounts = None
         self.transactions = None
         self.assets = None
@@ -94,6 +95,15 @@ class MatrixJsonRpc(object):
         """
         self.accounts = self._call('GET', endpoint='accounts')
         return self.accounts
+
+    def matrix_getaccount(self, address):
+        """
+          Get individual account by address [/accounts/<address>]
+        """
+        account_by_address = 'accounts/{}'.format(address)
+        self.account = self._call('GET', endpoint=account_by_address)
+
+        return self.account
 
     def matrix_assets(self):
         """
