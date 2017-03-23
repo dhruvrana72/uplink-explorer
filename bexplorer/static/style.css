@@ -23,3 +23,7 @@
 .mdl-tooltip {
     max-width: 100% !important;
 }
+
+button.mdl-chip {
+    cursor: pointer;
+}

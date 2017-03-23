@@ -19,7 +19,7 @@ matrix.init_app(app)
 RESPONSE = 'RPCResp'
 ERROR = 'RPCRespError'
 CUTLENGTH = 10  # length to shorten hashes
-
+FPREC = 0.0000001
 # Load default config and override config from an environment variable
 app.config.update(dict(
     # DATABASE=os.path.join(app.root_path, DATABASE),
@@ -41,17 +41,11 @@ def shorten(string):
         return ''
 
 
-@app.template_filter('empl')
-def empl(string):
-    if string is 'Darren Tseng':
-        return 'Thomas Dietert'
-
-
 @app.template_filter('shorten_key')
 def shortkeys(string):
     """shorten keys"""
     if string:
-        return string[29:39]
+        return string[30:40]
     else:
         return ''
 
@@ -65,6 +59,26 @@ def peers(p):
 
     return peers
 
+
+@app.template_filter('convert')
+def convert(value, atype):
+    """
+        convert asset type fractional to fixed precision
+        FPREC is 10^(-7) or 0.0000001
+    """
+    if value:
+        if atype == 'Discrete':
+            return value
+        if atype == 'Fractional':
+            result = value * FPREC
+            return result
+        if atype is 'Binary':
+            if value == 0:
+                return 'not held'
+            else:
+                return 'held'
+    else:
+        return 'error with asset type'
 
 @app.template_filter('to_pretty_json')
 def to_pretty_json(value):
@@ -151,6 +165,22 @@ def show_assets():
     assets = handle_results(res)
 
     return render_template('assets.html', assets=assets)
+
+
+@app.route('/assets/holdings', methods=['GET', 'POST'])
+def asset_holdings():
+    """get holdings of assets"""
+    res = request.form['submit']
+    holdings = eval(res)
+
+    print '========!!!!!!!!=========='
+    print holdings
+    print '========!!!!!!!!=========='
+
+    res = matrix.assets()
+    assets = handle_results(res)
+
+    return render_template('assets.html', assets=assets, holdings=holdings)
 
 
 @app.route('/contracts', methods=['GET', 'POST'])

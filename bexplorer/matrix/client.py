@@ -27,6 +27,7 @@ class MatrixJsonRpc(object):
         self.peers = None
         self.account = None
         self.accounts = None
+        self.newaccount = None
         self.transactions = None
         self.assets = None
         self.contracts = None
@@ -71,7 +72,6 @@ class MatrixJsonRpc(object):
         """
 
         self.blocks = self._call('GET', endpoint='blocks')
-        print self.blocks
         return self.blocks
 
     def matrix_peers(self):
@@ -79,7 +79,6 @@ class MatrixJsonRpc(object):
           Get a list of peers and return number of peers
         """
         self.peers = self._call('GET', endpoint='peers')
-        print self.peers
         return self.peers
 
     def matrix_transactions(self, block_id=0):
@@ -104,6 +103,12 @@ class MatrixJsonRpc(object):
         self.account = self._call('GET', endpoint=account_by_address)
 
         return self.account
+
+    def matrix_createaccount(self):
+        """
+          Create new account
+        """
+        self.newaccount = self._call('POST', endpoint='account/create')
 
     def matrix_assets(self):
         """
