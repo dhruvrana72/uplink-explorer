@@ -44,25 +44,30 @@ class MatrixSession(object):
         return peers
 
     def transactions(self, block_id=0):
-        transactions = self.conn.matrix_transactions(block_id)
-        return transactions
+        tx = self.conn.matrix_transactions(block_id)
+        return tx
 
     def accounts(self):
         accounts = self.conn.matrix_accounts()
         return accounts
 
     def getaccount(self, address):
-        account = self.conn.matrix_getaccount(address)
+        account = self.conn.matrix_get_account(address)
         return account
 
     def createaccount(self):
-        newaccount = self.conn.matrix_createaccount()
+        newaccount = self.conn.matrix_create_account()
         return newaccount
 
     def assets(self):
         assets = self.conn.matrix_assets()
         print assets
         return assets
+
+    def create_asset(self, name, supply, asset_type, reference):
+        print name, supply, asset_type, reference
+        new_asset = self.conn.matrix_create_asset(name, supply, asset_type, reference)
+        return new_asset
 
     def contracts(self):
         contracts = self.conn.matrix_contracts()

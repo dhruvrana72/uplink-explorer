@@ -96,6 +96,9 @@ def to_pretty_json(value):
 
 @app.template_filter('datetimeformat')
 def datetimeformat(unix_timestamp):
+    # print '--------------'
+    # print unix_timestamp
+    # print '---------------'
     """Filter for converting unix time to human readable"""
     return time.strftime('%m/%d/%Y, %I:%M %p', time.localtime(unix_timestamp))
 
@@ -115,7 +118,7 @@ def handle_results(res):
     else:
         jsonified = jsonify(res)
         loaded = json.loads(jsonified.data)
-        results = loaded['_data']
+        results = loaded['contents']
 
     return results
 
@@ -135,8 +138,9 @@ def show_index():
 def show_transactions():
     """Present a table of transactions"""
     block_id = request.form['submit']
-
+    
     res = matrix.transactions(block_id)
+    print res
     transactions = handle_results(res)
 
     return render_template('transactions.html', transactions=transactions)
@@ -157,7 +161,7 @@ def account_by_address():
     """present specific account metadata, lookup by address"""
     address = request.form['submit']
     res = matrix.getaccount(address)
-    print res
+    # print res
     accinfo = handle_results(res)
 
     res = matrix.accounts()
@@ -174,21 +178,45 @@ def show_assets():
 
     return render_template('assets.html', assets=assets)
 
-
-@app.route('/assets/holdings', methods=['GET', 'POST'])
-def asset_holdings():
-    """get holdings of assets"""
-    res = request.form['submit']
-    holdings = eval(res)
-
+@app.route('/assets/create', methods=['GET', 'POST'])
+def create_asset():
+    """Create a new asset"""
+    print request.form['submit']
+    print request.form
+    name = request.form['name']
+    supply = request.form['supply']
+    asset_type = request.form['asset_type']
+    reference = request.form['reference']
     print '========!!!!!!!!=========='
-    print holdings
+    print name
+    print supply
+    print asset_type
+    print reference
     print '========!!!!!!!!=========='
+    matrix.create_asset(name, supply, asset_type, reference)
 
     res = matrix.assets()
     assets = handle_results(res)
 
-    return render_template('assets.html', assets=assets, holdings=holdings)
+    return render_template('assets.html', assets=assets)
+
+@app.route('/assets/holdings', methods=['GET', 'POST'])
+def asset_holdings():
+    """get holdings of assets"""
+    asset_type = request.form['atype']
+    atype = {u'type': asset_type}
+
+    res = request.form['submit']
+    holdings = eval(res)
+
+    # print '========!!!!!!!!=========='
+    # print holdings
+    # print '========!!!!!!!!=========='
+
+    res = matrix.assets()
+    assets = handle_results(res)
+
+    return render_template('assets.html', assets=assets, holdings=holdings, atype=atype)
 
 
 @app.route('/contracts', methods=['GET', 'POST'])

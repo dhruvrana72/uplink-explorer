@@ -29,7 +29,11 @@
                                     {{block.header.origin}}
                                 </div>
                             </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | safe }}</td>
+                            <td id="{{block.header.prevBlock | shorten}}" class="mdl-data-table__cell--non-numeric">{{block.header.prevBlock | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{block.header.prevBlock | shorten}}">
+                                    {{block.header.prevBlock}}
+                                </div>
+                            </td>
                             <td>
                                 <form action="{{ url_for('show_transactions') }}" method="post">
                                     <button id="{{'trans {}'.format(block.index)}}" type="submit" name="submit" value="{{block.index}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">

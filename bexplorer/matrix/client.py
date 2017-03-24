@@ -36,7 +36,7 @@ class MatrixJsonRpc(object):
         print 'RPC Call'
         # logging.info("RPC call")
         self.endpoint = endpoint
-        params = params or []
+        params = params or {}
         data = {
             'method': method,
             'params': params,
@@ -85,7 +85,10 @@ class MatrixJsonRpc(object):
         """
           Get a list of transactions by block index
         """
-        self.transactions = self._call('GET', endpoint='transactions')
+        transactions_by_id = 'transactions/{}'.format(block_id)
+        self.transactions = self._call('GET', endpoint=transactions_by_id)
+        # print '==========tx============'
+        # print self.transactions
         return self.transactions
 
     def matrix_accounts(self):
@@ -104,11 +107,11 @@ class MatrixJsonRpc(object):
 
         return self.account
 
-    def matrix_createaccount(self):
+    def matrix_create_account(self):
         """
           Create new account
         """
-        self.newaccount = self._call('POST', endpoint='account/create')
+        self.newaccount = self._call('CreateAccount', endpoint='')
 
     def matrix_assets(self):
         """
@@ -117,6 +120,18 @@ class MatrixJsonRpc(object):
         self.assets = self._call('GET', endpoint='assets')
         return self.assets
 
+    def matrix_create_asset(self, name, supply, asset_type, reference):
+        """
+          Create asset
+        """
+        params = {
+          'name' : name,
+          'supply' : str(supply),
+          'assetType': asset_type,
+          'reference': reference
+        }
+
+        self.assets = self._call('CreateAsset', params=params, endpoint='')
     def matrix_contracts(self):
         """
           Get a list of contacts

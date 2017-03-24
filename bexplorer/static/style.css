@@ -17,7 +17,7 @@
 
 .demo-card-square>.mdl-card__title {
     color: #333;
-    background: url('teaser.png') bottom left 0% no-repeat #46B6AC;
+    background: url('teaser.png') bottom left 0% no-repeat #F5F5F5;
 }
 
 .mdl-tooltip {
@@ -26,4 +26,8 @@
 
 button.mdl-chip {
     cursor: pointer;
+}
+
+.hide {
+    display: none !important;
 }
