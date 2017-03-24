@@ -77,5 +77,11 @@
             </div>
         </div>
     </div>
+    <form action="{{ url_for('create_account')}}" method="post">
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored circle-btn" type="submit" name="submit" value="create_account">
+            <i class="material-icons">add</i>
+        </button>
+    </form>
+
 </main>
 {% endblock %}

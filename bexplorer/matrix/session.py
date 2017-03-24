@@ -55,7 +55,7 @@ class MatrixSession(object):
         account = self.conn.matrix_get_account(address)
         return account
 
-    def createaccount(self):
+    def create_account(self):
         newaccount = self.conn.matrix_create_account()
         return newaccount
 
@@ -66,7 +66,8 @@ class MatrixSession(object):
 
     def create_asset(self, name, supply, asset_type, reference):
         print name, supply, asset_type, reference
-        new_asset = self.conn.matrix_create_asset(name, supply, asset_type, reference)
+        new_asset = self.conn.matrix_create_asset(
+            name, supply, asset_type, reference)
         return new_asset
 
     def contracts(self):

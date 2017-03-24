@@ -27,7 +27,7 @@ class MatrixJsonRpc(object):
         self.peers = None
         self.account = None
         self.accounts = None
-        self.newaccount = None
+        self.newacct = None
         self.transactions = None
         self.assets = None
         self.contracts = None
@@ -59,6 +59,9 @@ class MatrixJsonRpc(object):
             raise BadStatusCodeError(req.status_code)
         try:
             response = req.json()
+            print '=====!========'
+            print req
+            print '=====!========'
         except ValueError:
             raise BadJsonError(req.error)
         try:
@@ -98,7 +101,7 @@ class MatrixJsonRpc(object):
         self.accounts = self._call('GET', endpoint='accounts')
         return self.accounts
 
-    def matrix_getaccount(self, address):
+    def matrix_get_account(self, address):
         """
           Get individual account by address [/accounts/<address>]
         """
@@ -111,7 +114,17 @@ class MatrixJsonRpc(object):
         """
           Create new account
         """
-        self.newaccount = self._call('CreateAccount', endpoint='')
+        params = {
+            'timezone': 'EST/Eastern Standard Time',
+            'metadata': {
+                'stuff': 'ffuts',
+                'beer': 'samadamadams',
+                'numb': '59009'
+            }
+        }
+        self.newacct = self._call(
+            'CreateAccount', params=params, endpoint='')
+        return self.newacct
 
     def matrix_assets(self):
         """
@@ -124,14 +137,29 @@ class MatrixJsonRpc(object):
         """
           Create asset
         """
-        params = {
-          'name' : name,
-          'supply' : str(supply),
-          'assetType': asset_type,
-          'reference': reference
-        }
+        if asset_type != 'Fractional':
+            params = {
+                'assetName': str(name),
+                'supply': str(supply),
+                'assetType': {
+                    'tag': bytes(asset_type),
+                },
+                'reference': str(reference)
+            }
+        else:
+            params = {
+                'assetName': str(name),
+                'supply': str(supply),
+                'assetType': {
+                    'tag': bytes(asset_type),
+                    'contents': 1
+                },
+                'reference': str(reference)
+            }
 
         self.assets = self._call('CreateAsset', params=params, endpoint='')
+        return self.assets
+
     def matrix_contracts(self):
         """
           Get a list of contacts

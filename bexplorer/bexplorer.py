@@ -75,7 +75,7 @@ def convert(value, atype):
             return value
 
         if atype['type'] == 'Fractional':
-            # print '======FRAC VAL=======' 
+            # print '======FRAC VAL======='
             # print value
             result = value * FPREC
             return result
@@ -87,6 +87,7 @@ def convert(value, atype):
                 return 'held'
     else:
         return 'error with asset type'
+
 
 @app.template_filter('to_pretty_json')
 def to_pretty_json(value):
@@ -138,7 +139,7 @@ def show_index():
 def show_transactions():
     """Present a table of transactions"""
     block_id = request.form['submit']
-    
+
     res = matrix.transactions(block_id)
     print res
     transactions = handle_results(res)
@@ -153,6 +154,21 @@ def show_accounts():
     # print res
     accounts = handle_results(res)
 
+    return render_template('accounts.html', accounts=accounts)
+
+
+@app.route('/accounts/create', methods=['GET', 'POST'])
+def create_account():
+    """Create an Account"""
+    res = matrix.create_account()
+    # newacct = handle_results(res)
+    print "=====New Account======"
+    # print newacct
+    print res
+    print "=====/New Account/===="
+
+    res = matrix.accounts()
+    accounts = handle_results(res)
     return render_template('accounts.html', accounts=accounts)
 
 
@@ -178,27 +194,29 @@ def show_assets():
 
     return render_template('assets.html', assets=assets)
 
+
 @app.route('/assets/create', methods=['GET', 'POST'])
 def create_asset():
     """Create a new asset"""
-    print request.form['submit']
-    print request.form
+    # print request.form['submit']
+    # print request.form
     name = request.form['name']
     supply = request.form['supply']
     asset_type = request.form['asset_type']
     reference = request.form['reference']
-    print '========!!!!!!!!=========='
-    print name
-    print supply
-    print asset_type
-    print reference
-    print '========!!!!!!!!=========='
+    # print '========!!!!!!!!=========='
+    # print name
+    # print supply
+    # print asset_type
+    # print reference
+    # print '========!!!!!!!!=========='
     matrix.create_asset(name, supply, asset_type, reference)
 
     res = matrix.assets()
     assets = handle_results(res)
 
     return render_template('assets.html', assets=assets)
+
 
 @app.route('/assets/holdings', methods=['GET', 'POST'])
 def asset_holdings():

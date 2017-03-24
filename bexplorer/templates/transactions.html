@@ -41,13 +41,13 @@
                             <td>--</td>
                             <td>--</td>
 
-                            {% endif %} {% if tx.header.tag is equalto 'TxAddr' %}
+                            {% endif %} {% if tx.header.tag is equalto 'TxAccount' %}
                             <td class="mdl-data-table__cell--non-numeric">Address</td>
                             <td class="mdl-data-table__cell--non-numeric">{{tx.header.contents.tag}}</td>
                             <td>--</td>
                             <td>--</td>
                             <td>--</td>
-                            <td>{{tx.header.contents.contents | shorten}}</td>
+                            <td>{{tx.header.contents.contents.account | shorten}}</td>
                             {% endif %}
                         </tr>
                         {% else %}
