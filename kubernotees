@@ -1,0 +1,34 @@
+[kubeadm] WARNING: kubeadm is in alpha, please do not use it for production clusters.
+[preflight] Running pre-flight checks
+[init] Using Kubernetes version: v1.5.5
+[tokens] Generated token: "388585.707e6150a9b8bfe2"
+[certificates] Generated Certificate Authority key and certificate.
+[certificates] Generated API Server key and certificate
+[certificates] Generated Service Account signing keys
+[certificates] Created keys and certificates in "/etc/kubernetes/pki"
+
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/kubelet.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/admin.conf"
+[apiclient] Created API client, waiting for the control plane to become ready
+[apiclient] All control plane components are healthy after 42.266264 seconds
+[apiclient] Waiting for at least one node to register and become ready
+[apiclient] First node is ready after 6.001467 seconds
+[apiclient] Creating a test deployment
+[apiclient] Test deployment succeeded
+[token-discovery] Created the kube-discovery deployment, waiting for it to become ready
+[token-discovery] kube-discovery is ready after 17.504214 seconds
+[addons] Created essential addon: kube-proxy
+[addons] Created essential addon: kube-dns
+
+Your Kubernetes master has initialized successfully!
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+    http://kubernetes.io/docs/admin/addons/
+
+You can now join any number of machines by running the following on each node:
+
+kubeadm join --token=388585.707e6150a9b8bfe2 172.16.42.158
+
+
+https://kubernetes.io/docs/getting-started-guides/kubeadm/
