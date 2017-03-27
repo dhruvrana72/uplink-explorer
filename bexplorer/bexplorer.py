@@ -141,7 +141,9 @@ def show_transactions():
     block_id = request.form['submit']
 
     res = matrix.transactions(block_id)
+    print '======TX========'
     print res
+    print '======TX========'
     transactions = handle_results(res)
 
     return render_template('transactions.html', transactions=transactions)
@@ -245,3 +247,20 @@ def show_contracts():
     contracts = handle_results(res)
     print contracts
     return render_template('contracts.html', contracts=contracts)
+
+
+@app.route('/contracts/create', methods=['GET', 'POST'])
+def create_contract():
+    """Create new contract"""
+
+    script = request.form['script']
+    res = matrix.create_contract(script)
+    new_contract_addr = handle_results(res)
+    # print '=========script=========='
+    # print new_contract_addr
+    # print '=========script=========='
+
+    res = matrix.contracts()
+    contracts = handle_results(res)
+
+    return render_template('contracts.html', contracts=contracts, new_contract_addr=new_contract_addr)

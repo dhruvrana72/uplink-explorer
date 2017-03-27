@@ -61,11 +61,11 @@ class MatrixSession(object):
 
     def assets(self):
         assets = self.conn.matrix_assets()
-        print assets
+        # print assets
         return assets
 
     def create_asset(self, name, supply, asset_type, reference):
-        print name, supply, asset_type, reference
+        # print name, supply, asset_type, reference
         new_asset = self.conn.matrix_create_asset(
             name, supply, asset_type, reference)
         return new_asset
@@ -73,3 +73,9 @@ class MatrixSession(object):
     def contracts(self):
         contracts = self.conn.matrix_contracts()
         return contracts
+
+    def create_contract(self, script):
+        print script
+
+        new_contract = self.conn.matrix_create_contract(script)
+        return new_contract

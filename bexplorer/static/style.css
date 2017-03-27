@@ -20,6 +20,10 @@
     background: url('teaser.png') bottom left 0% no-repeat #F5F5F5;
 }
 
+.mdl-grid {
+    margin: 0px;
+}
+
 .mdl-tooltip {
     max-width: 100% !important;
 }
@@ -36,4 +40,8 @@ button.mdl-chip {
     position: fixed;
     bottom: 50px;
     right: 50px;
+}
+
+.mdl-textfield {
+    width: 100%;
 }

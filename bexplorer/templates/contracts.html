@@ -2,30 +2,67 @@
 <main class="mdl-layout__content">
     <div class="page-content">
         <br>
-
         <div class="mdl-grid">
-            {% for con in contracts %}
+            <div class="mdl-cell mdl-cell--5-col" style="position:fixed">
+                <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Create New Contract</h2>
 
-            <div class="mdl-cell mdl-cell--10-col">
+                    </div>
+                    {% if new_contract_addr %}
+                    <div class="mdl-card__supporting-text">
+                        <h6>New Contract Contract Address</h6>
+                        <small>{{ new_contract_addr }}</small>
+                    </div>
+                    {% endif %}
+                    <form action="{{ url_for('create_contract') }}" method="post">
+                        <div class="mdl-card__supporting-text">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <textarea class="mdl-textfield__input" name="script" required type="text" rows="10" id="script">
+global x = 0;
+local y = 0;
+asset z = 0xR8a7C66BwPfw9wGXSqZDVtABHvLfcoGorbafuTJ2CjnobPg3yvGRNf3tY8vZ;
+
+setX () {
+x = 42;
+}
+
+getX () {
+return x;
+}
+                                </textarea>
+                                <label class="mdl-textfield__label" for="script">Enter Contract Script...</label>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button type="submit" name="submit" value "create_contract" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    Create Contract
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            {% for con in contracts %}
+            <div class="mdl-cell mdl-cell--7-col mdl-cell--5-offset">
 
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
                     <div class="mdl-card__title mdl-card--expand">
                         <h2 class="mdl-card__title-text">Contract Address: {{con.address | shorten}}</h2>
                     </div>
-                    <div class="mdl-grid">
+                    <div class="mdl-grid mdl-cell--stretch">
 
-                        <div class="mdl-cell mdl-cell--8-col">
-                            <div class="mdl-card__supporting-text">
-                                <h6>Full Address</h6>
-                                {{con.address}}
-                                <h6>Script</h6>
-                                <div class="mdl-card__actions mdl-card--border">
-                                    <pre contenteditable="true"><code>assd{{con.contract.script}}</code></pre>
-                                </div>
+                        <div class="mdl-cell mdl-cell--10-col">
+                            <h6>Full Address</h6>
+                            {{con.address}}
+                            <h6>Script</h6>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <pre contenteditable="true"><code> {{con.contract.script}}</code></pre>
                             </div>
                         </div>
-                        <div class="mdl-cell mdl-cell--4-col">
-                            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                        <div class="mdl-cell mdl-cell--2-col">
+                            <h6>Contract Storage</h6>
+                            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="float:right">
                                 <thead>
                                     <tr>
                                         <th class="mdl-data-table__cell--non-numeric">Key</th>
@@ -48,12 +85,12 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             {% else %}
             <h5>No contracts available</h5>
             {% endfor %}
+
         </div>
 
     </div>

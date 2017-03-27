@@ -31,6 +31,7 @@ class MatrixJsonRpc(object):
         self.transactions = None
         self.assets = None
         self.contracts = None
+        self.new_contract = None
 
     def _call(self, method, params=None, endpoint=None):
         print 'RPC Call'
@@ -164,6 +165,19 @@ class MatrixJsonRpc(object):
         """
           Get a list of contacts
         """
+
         self.contracts = self._call('GET', endpoint='contracts')
         print self.contracts
         return self.contracts
+
+    def matrix_create_contract(self, script):
+        """
+          Create a new Contract
+        """
+
+        params = {
+            'script': script
+        }
+        self.new_contract = self._call(
+            'CreateContract', params=params, endpoint='')
+        return self.new_contract
