@@ -34,7 +34,7 @@ class MatrixJsonRpc(object):
         self.new_contract = None
 
     def _call(self, method, params=None, endpoint=None):
-        print 'RPC Call'
+        print('RPC Call')
         # logging.info("RPC call")
         self.endpoint = endpoint
         params = params or {}
@@ -60,9 +60,9 @@ class MatrixJsonRpc(object):
             raise BadStatusCodeError(req.status_code)
         try:
             response = req.json()
-            print '=====!========'
-            print req
-            print '=====!========'
+            # print '=====!========'
+            # print req
+            # print '=====!========'
         except ValueError:
             raise BadJsonError(req.error)
         try:
@@ -167,7 +167,7 @@ class MatrixJsonRpc(object):
         """
 
         self.contracts = self._call('GET', endpoint='contracts')
-        print self.contracts
+        # print self.contracts
         return self.contracts
 
     def matrix_create_contract(self, script):

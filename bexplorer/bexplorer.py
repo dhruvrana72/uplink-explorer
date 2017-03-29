@@ -11,7 +11,7 @@ from matrix.session import MatrixSession
 
 # set app
 app = Flask(__name__)
-matrix = MatrixSession(addr='54.163.224.249')
+matrix = MatrixSession(addr='34.203.168.255')
 # matrix = MatrixSession()
 matrix.init_app(app)
 
@@ -34,7 +34,6 @@ app.config.from_envvar('APP_SETTINGS', silent=True)
 @app.template_filter('shorten')
 def shorten(string):
     """shorten addresses for readability"""
-    print string
     if string:
         return string[0:CUTLENGTH]
     else:
@@ -110,8 +109,8 @@ def handle_results(res):
     # print res
     if res['tag'] == ERROR:
         results = json.load(res)
-        print results.contents.errorType
-        print results.contents.errorMsg
+        print(results.contents.errorType)
+        print(results.contents.errorMsg)
         error = '{} : {}'.format(
             results.contents.errorType, results.contents.errorMsg)
         flash(error)
@@ -141,9 +140,9 @@ def show_transactions():
     block_id = request.form['submit']
 
     res = matrix.transactions(block_id)
-    print '======TX========'
-    print res
-    print '======TX========'
+    # print '======TX========'
+    # print res
+    # print '======TX========'
     transactions = handle_results(res)
 
     return render_template('transactions.html', transactions=transactions)
@@ -164,10 +163,10 @@ def create_account():
     """Create an Account"""
     res = matrix.create_account()
     # newacct = handle_results(res)
-    print "=====New Account======"
-    # print newacct
-    print res
-    print "=====/New Account/===="
+    # print "=====New Account======"
+    # # print newacct
+    # print res
+    # print "=====/New Account/===="
 
     res = matrix.accounts()
     accounts = handle_results(res)
@@ -245,7 +244,7 @@ def show_contracts():
     res = matrix.contracts()
 
     contracts = handle_results(res)
-    print contracts
+    # print contracts
     return render_template('contracts.html', contracts=contracts)
 
 

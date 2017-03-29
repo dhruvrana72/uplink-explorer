@@ -75,7 +75,7 @@ class MatrixSession(object):
         return contracts
 
     def create_contract(self, script):
-        print script
+        # print script
 
         new_contract = self.conn.matrix_create_contract(script)
         return new_contract
