@@ -45,3 +45,13 @@ button.mdl-chip {
 .mdl-textfield {
     width: 100%;
 }
+
+.flash {
+    background: #ef5555;
+    position: fixed;
+    display: block;
+    z-index: 223;
+    padding: 20px;
+    color: white;
+    bottom: 0;
+}
