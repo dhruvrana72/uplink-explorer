@@ -108,19 +108,22 @@ def handle_results(res):
     # print "!!!!!!!!!!!!!!!!!!!!"
     # print res
     if res['tag'] == ERROR:
-        results = json.load(res)
-        print(results.contents.errorType)
-        print(results.contents.errorMsg)
-        error = '{} : {}'.format(
-            results.contents.errorType, results.contents.errorMsg)
-        flash(error)
-        results = error
+        print '--- ERROR------'
+        print res
+        print '---------------'
+        results = res
+        jsonified = jsonify(res)
+        loaded = json.loads(jsonified.data)
+        results = loaded['contents']
+        error = 'Error: {} : {}'.format(
+            results['errorType'], results['errorMsg'])
+        flash(error, 'error')
+
     else:
         jsonified = jsonify(res)
         loaded = json.loads(jsonified.data)
         results = loaded['contents']
-
-    return results
+        return results
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -178,7 +181,9 @@ def account_by_address():
     """present specific account metadata, lookup by address"""
     address = request.form['submit']
     res = matrix.getaccount(address)
-    # print res
+    print '======accounts by address========'
+    print res
+    print '==============================='
     accinfo = handle_results(res)
 
     res = matrix.accounts()
