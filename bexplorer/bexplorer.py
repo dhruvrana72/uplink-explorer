@@ -8,6 +8,7 @@ from jinja2 import Environment, FileSystemLoader
 from flask import Flask, request, session, g, redirect, render_template, \
     url_for, abort, flash, jsonify
 from matrix.session import MatrixSession
+from utils import formatPrec
 
 # set app
 app = Flask(__name__)
@@ -65,18 +66,15 @@ def convert(value, atype):
         convert asset type fractional to fixed precision
         FPREC is 10^(-7) or 0.0000001
     """
-    # print '=================='
-    # print value, atype
-    # print '=================='
 
     if value:
         if atype['type'] == 'Discrete':
             return value
 
         if atype['type'] == 'Fractional':
-            # print '======FRAC VAL======='
-            # print value
-            result = value * FPREC
+
+            prec = atype['precision']
+            result = formatPrec(prec, value)
             return result
 
         if atype['type'] == 'Binary':
