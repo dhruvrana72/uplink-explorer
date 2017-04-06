@@ -226,14 +226,16 @@ def create_asset():
 def asset_holdings():
     """get holdings of assets"""
     asset_type = request.form['atype']
-    atype = {u'type': asset_type}
+
+    #  checks if precision exists
+    if request.form['prec'] is not False:
+        prec = request.form['prec']
+        atype = {u'type': asset_type, u'precision': prec}
+    else:
+        atype = {u'type': asset_type}
 
     res = request.form['submit']
     holdings = eval(res)
-
-    # print '========!!!!!!!!=========='
-    # print holdings
-    # print '========!!!!!!!!=========='
 
     res = matrix.assets()
     assets = handle_results(res)
