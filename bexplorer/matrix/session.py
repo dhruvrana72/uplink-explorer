@@ -61,7 +61,6 @@ class MatrixSession(object):
 
     def assets(self):
         assets = self.conn.matrix_assets()
-        # print assets
         return assets
 
     def create_asset(self, name, supply, asset_type, reference):
