@@ -141,12 +141,24 @@ def show_transactions():
     block_id = request.form['submit']
 
     res = matrix.transactions(block_id)
-    # print '======TX========'
-    # print res
-    # print '======TX========'
     transactions = handle_results(res)
 
-    return render_template('transactions.html', transactions=transactions)
+    return render_template('transactions.html', transactions=transactions, block_id=block_id)
+
+
+@app.route('/transactions/details', methods=['GET', 'POST'])
+def show_tx_details():
+    """Present a table of transaction details"""
+
+    block_id = request.form['block_id']
+    res = matrix.transactions(block_id)
+    transactions = handle_results(res)
+
+    res = request.form['submit']
+    details = eval(res)
+
+    return render_template('transactions.html', transactions=transactions, block_id=block_id,
+                           details=details)
 
 
 @app.route('/accounts', methods=['GET', 'POST'])
@@ -162,15 +174,11 @@ def show_accounts():
 @app.route('/accounts/create', methods=['GET', 'POST'])
 def create_account():
     """Create an Account"""
-    res = matrix.create_account()
-    # newacct = handle_results(res)
-    # print "=====New Account======"
-    # # print newacct
-    # print res
-    # print "=====/New Account/===="
+    matrix.create_account()
 
     res = matrix.accounts()
     accounts = handle_results(res)
+
     return render_template('accounts.html', accounts=accounts)
 
 
@@ -179,9 +187,7 @@ def account_by_address():
     """present specific account metadata, lookup by address"""
     address = request.form['submit']
     res = matrix.getaccount(address)
-    print '======accounts by address========'
-    print res
-    print '==============================='
+
     accinfo = handle_results(res)
 
     res = matrix.accounts()
@@ -202,18 +208,12 @@ def show_assets():
 @app.route('/assets/create', methods=['GET', 'POST'])
 def create_asset():
     """Create a new asset"""
-    # print request.form['submit']
-    # print request.form
+
     name = request.form['name']
     supply = request.form['supply']
     asset_type = request.form['asset_type']
     reference = request.form['reference']
-    # print '========!!!!!!!!=========='
-    # print name
-    # print supply
-    # print asset_type
-    # print reference
-    # print '========!!!!!!!!=========='
+
     matrix.create_asset(name, supply, asset_type, reference)
 
     res = matrix.assets()
@@ -260,9 +260,6 @@ def create_contract():
     script = request.form['script']
     res = matrix.create_contract(script)
     new_contract_addr = handle_results(res)
-    # print '=========script=========='
-    # print new_contract_addr
-    # print '=========script=========='
 
     res = matrix.contracts()
     contracts = handle_results(res)
