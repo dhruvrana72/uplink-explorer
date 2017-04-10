@@ -4,7 +4,8 @@
         <br>
 
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--8-col">
+            <div class="mdl-cell mdl-cell--6-col">
+                <h5>Transactions in block {{block_id}}</h5>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
@@ -46,7 +47,7 @@
                             {% endif %}
                             <td>
                                 <form action="{{ url_for('show_tx_details') }}" method="post">
-                                    <input class="hide" name="atype" value="{{block_id}}" readonly/>
+                                    <input class="hide" name="block_id" value="{{block_id}}" readonly/>
                                     <button id="{{'{}|{}'.format(tx.timestamp, tx.from)}}" type="submit" name="submit" value="{{tx}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                     <i class="material-icons">pageview</i>
                                     </button>
@@ -68,8 +69,9 @@
 
             {% if details %}
             <div class="mdl-cell mdl-cell--4-col">
+                <h5>Details</h5>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-                    {% if details.header.tag is equalto 'TxAsset %}
+                    {% if details.header.tag is equalto 'TxAsset' %}
                     <thead>
                         <tr>
                             <th class="mdl-data-table__cell--non-numeric">From</th>
@@ -84,28 +86,48 @@
                             <td>{{details.header.contents.contents.toAddr | shorten}}</td>
                         </tr>
                     </tbody>
+                    {% endif %} {% if details.header.contents.tag is equalto 'Call' %}
 
+                    <thead>
+                        <tr>
+                            <th>Contract Method Called</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{details.header.contents.contents}}</td>
+                        </tr>
+                    </tbody>
                     {% endif %} {% if details.header.tag is equalto 'TxAccount' %}
                     <thead>
                         <tr>
                             <th>Account Address</th>
+                            <th>Timezone</th>
+                            <th>Public Key</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{tx.header.contents.contents.account.address | shorten}}</td>
+                            <td>{{details.header.contents.contents.account.address | shorten}}</td>
+                            <td>{{details.header.contents.contents.account.timezone}}</td>
+                            <td>{{details.header.contents.contents.account.publicKey | shorten}}</td>
+
                         </tr>
                     </tbody>
-                    {% endif %} {% if details.header.tag is equalto 'TxContract' %}
-
+                </table>
+                <br><br>
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th>Metadata</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td></td>
+                            {% for key, value in details.header.contents.contents.account.metadata.iteritems() %}
+                            <td><b>{{key}}:</b></td>
+                            <td>{{value}}</td>
+                            {% endfor %}
                         </tr>
                     </tbody>
                     {% endif %}
