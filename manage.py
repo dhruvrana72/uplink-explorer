@@ -38,8 +38,21 @@ class Server(Command):
 
         # server.serve_forever()
 
+class Test(Command):
+    """Run test suite"""
+
+    def get_options(self):
+        return ()
+
+    def run(self):
+        import pytest
+        HERE = os.path.abspath(os.path.dirname(__file__))
+        TEST_PATH = os.path.join(HERE, 'tests')
+        exit_code = pytest.main([TEST_PATH, '--verbose', '--junitxml=$CIRCLE_TEST_REPORTS/summary.xml'])
+        return exit_code
 
 manager.add_command('server', Server())
+manager.add_command('test', Test())
 
 if __name__ == '__main__':
     manager.run()

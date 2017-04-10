@@ -36,3 +36,5 @@ Procfile
 {DATABASE}
 tags
 migrations/**
+
+$CIRCLE_TEST_REPORTS/
