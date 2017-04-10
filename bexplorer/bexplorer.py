@@ -141,12 +141,25 @@ def show_transactions():
     block_id = request.form['submit']
 
     res = matrix.transactions(block_id)
-    # print '======TX========'
-    # print res
-    # print '======TX========'
+    print '======TXs========'
+    print res
+    print '======TXs========'
     transactions = handle_results(res)
 
-    return render_template('transactions.html', transactions=transactions)
+    return render_template('transactions.html', transactions=transactions, block_id=block_id)
+
+
+@app.route('/transactions/details', methods=['GET', 'POST'])
+def show_tx_details():
+    """Present a table of transaction details"""
+    block_id = request.form['block_id']
+    res = matrix.transactions(block_id)
+    transactions = handle_results(res)
+
+    details = request.form['submit']
+
+    return render_template('transactions.html', transactions=transactions, block_id=block_id,
+                           details=details)
 
 
 @app.route('/accounts', methods=['GET', 'POST'])
