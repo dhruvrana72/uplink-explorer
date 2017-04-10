@@ -46,7 +46,9 @@
                             <td>{{ass.asset.issuedOn | datetimeformat}}</td>
                             <td class="">
                                 <form action="{{ url_for('asset_holdings')}}" method="post">
-                                    <input class="hide" name="atype" value="{{ass.asset.assetType.type}}" readonly/>
+                                    <input class="hide" name="atype" value="{{ass.asset.assetType.type}}" readonly/> {% if ass.asset.assetType.precision %}
+                                    <input class="hide" name="prec" value="{{ass.asset.assetType.precision}}" readonly/> {% else%}
+                                    <input class="hide" name="prec" value="False" readonly/> {% endif%}
                                     <button type="submit" name="submit" value="{{ass.asset.holdings}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                       <i class="material-icons">view_list</i>
                                     </button>
