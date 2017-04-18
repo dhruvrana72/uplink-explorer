@@ -111,18 +111,19 @@ class MatrixJsonRpc(object):
 
         return self.account
 
-    def matrix_create_account(self):
+    def matrix_create_account(self, params):
         """
           Create new account
         """
-        params = {
-            'timezone': 'EST/Eastern Standard Time',
-            'metadata': {
-                'stuff': 'ffuts',
-                'beer': 'samadamadams',
-                'numb': '59009'
+        if params is None:
+            params = {
+                'timezone': 'EST/Eastern Standard Time',
+                'metadata': {
+                    'stuff': 'ffuts',
+                    'beer': 'samadamadams',
+                    'numb': '59009'
+                }
             }
-        }
         self.newacct = self._call(
             'CreateAccount', params=params, endpoint='')
         return self.newacct
