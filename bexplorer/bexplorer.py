@@ -12,7 +12,7 @@ from utils import formatPrec
 
 # set app
 app = Flask(__name__)
-matrix = MatrixSession(addr='34.203.168.255')
+matrix = MatrixSession(addr='35.187.112.104')
 # matrix = MatrixSession()
 matrix.init_app(app)
 

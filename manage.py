@@ -5,38 +5,24 @@ from flask_script import Command, Manager, Option, Server
 # from gevent import pywsgi
 
 manager = Manager(app)
-# DEBUG FALSE BEFORE DEPLOYING!
-DEBUG = True
 KEYPATH = None
 CERTPATH = None
-PORT = 5000
 
+@manager.command
+def runServer(port=5000, debug=False):
+    # secure = secure.lower() == "true"
+    # if secure:
+    #     print("Running websocket server in secure ssl mode.")
+    #     server = pywsgi.WSGIServer(
+    #         ('', 5001), app, keyfile=KEYPATH, certfile=CERTPATH)
+    # else:
+    #     print("Running websocket server.")
+    #     server = pywsgi.WSGIServer(('', 5001), app)
 
-class Server(Command):
-    """Initializes server"""
-
-    # def __init__(self, secure=False):
-    # self.secure = secure
-
-    # def get_options(self):
-    #     return [
-    #         Option('-s', '--secure', dest='secure',
-    #                default=self.secure)
-    #     ]
-
-    def run(self):
-        print("Running server.")
-        server = app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
-        # secure = secure.lower() == "true"
-        # if secure:
-        #     print("Running websocket server in secure ssl mode.")
-        #     server = pywsgi.WSGIServer(
-        #         ('', 5001), app, keyfile=KEYPATH, certfile=CERTPATH)
-        # else:
-        #     print("Running websocket server.")
-        #     server = pywsgi.WSGIServer(('', 5001), app)
-
-        # server.serve_forever()
+    # server.serve_forever()
+    
+    print("Running server.")
+    app.run(host="0.0.0.0", port=port, debug=debug)
 
 class Test(Command):
     """Run test suite"""
