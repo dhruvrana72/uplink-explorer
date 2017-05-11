@@ -43,7 +43,7 @@ return x;
 
                 </div>
             </div>
-            {% for con in contracts %}
+            {% if contracts is not none %} {% for con in contracts %}
             <div class="mdl-cell mdl-cell--7-col mdl-cell--5-offset">
 
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
@@ -73,14 +73,24 @@ return x;
                                     {% for key, value in con.contract.storage.iteritems() %}
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
+                                        {% if value.tag is equalto 'VAddress' %}
+                                        <td id="{{value.contents | shorten}}">
+                                            {{value.contents | shorten}}
+                                            <div class="mdl-tooltip" data-mdl-for="{{value.contents | shorten}}">
+                                                {{value.contents}}
+                                            </div>
+                                        </td>
+
+                                        {% else %}
                                         <td>{{value}}</td>
+                                        {% endif %}
                                     </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td>Nothing in storage</td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
-                                {% else %}
-                                <tr>
-                                    <td>Nothing in storage</td>
-                                </tr>
-                                {% endfor %}
                             </table>
                         </div>
                     </div>
@@ -89,8 +99,11 @@ return x;
 
             {% else %}
             <h5>No contracts available</h5>
-            {% endfor %}
-
+            {% endfor %} {% else %}
+            <div class="mdl-cell mdl-cell--7-col mdl-cell--5-offset">
+                <h5>No Contracts Created Yet</h5>
+            </div>
+            {% endif %}
         </div>
 
     </div>

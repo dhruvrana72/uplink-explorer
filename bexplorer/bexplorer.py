@@ -15,8 +15,8 @@ from utils import formatPrec, printer
 
 # set app
 app = Flask(__name__)
-matrix = MatrixSession(addr='35.187.112.104')
-# matrix = MatrixSession()
+# matrix = MatrixSession(addr='35.187.112.104')
+matrix = MatrixSession()
 matrix.init_app(app)
 
 # env = Environment(loader=FileSystemLoader('/templates'))

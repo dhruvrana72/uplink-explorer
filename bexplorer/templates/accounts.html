@@ -14,7 +14,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for acc in accounts %}
+                        {% if accounts is not none %} {% for acc in accounts %}
                         <tr>
                             <td id="{{acc.publicKey | shorten_key}}" class="mdl-data-table__cell--non-numeric">{{acc.publicKey | shorten_key}}
                                 <div class="mdl-tooltip" data-mdl-for="{{acc.publicKey | shorten_key}}">
@@ -40,7 +40,11 @@
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
                         </tr>
-                        {% endfor %}
+                        {% endfor %} {% else %}
+                        <tr>
+                            <td>No Accounts Created Yet</td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

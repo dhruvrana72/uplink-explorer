@@ -16,7 +16,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for block in blockset %}
+                        {% if blockset is not none %} {% for block in blockset %}
                         <tr>
                             <td id="{{block.header.merkleRoot | shorten }}" class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | shorten }}
                                 <div class="mdl-tooltip" data-mdl-for="{{block.header.merkleRoot | shorten}}">
@@ -49,7 +49,11 @@
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
                         </tr>
-                        {% endfor %}
+                        {% endfor %} {% else %}
+                        <tr>
+                            <td>No blocks Created Yet</td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
