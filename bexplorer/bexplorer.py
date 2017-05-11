@@ -7,8 +7,11 @@ import random
 from jinja2 import Environment, FileSystemLoader
 from flask import Flask, request, session, g, redirect, render_template, \
     url_for, abort, flash, jsonify
+
+import codecs
 from matrix.session import MatrixSession
-from utils import formatPrec
+from matrix.utils import ecdsa_new
+from utils import formatPrec, printer
 
 # set app
 app = Flask(__name__)
@@ -106,9 +109,7 @@ def handle_results(res):
     # print "!!!!!!!!!!!!!!!!!!!!"
     # print res
     if res['tag'] == ERROR:
-        print '--- ERROR------'
-        print res
-        print '---------------'
+        printer(res, "Error")
         results = res
         jsonified = jsonify(res)
         loaded = json.loads(jsonified.data)
@@ -118,6 +119,7 @@ def handle_results(res):
         flash(error, 'error')
 
     else:
+        printer(res, "Results")
         jsonified = jsonify(res)
         loaded = json.loads(jsonified.data)
         results = loaded['contents']
@@ -174,8 +176,12 @@ def show_accounts():
 @app.route('/accounts/create', methods=['GET', 'POST'])
 def create_account():
     """Create an Account"""
-    matrix.create_account()
 
+    pubkey, skey = ecdsa_new()
+    privkey = skey.to_string()
+    private_key_hex = codecs.encode(privkey, 'hex')
+
+    matrix.create_account(privkey=private_key_hex)
     res = matrix.accounts()
     accounts = handle_results(res)
 

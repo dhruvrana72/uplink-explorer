@@ -4,5 +4,8 @@ requests == 2.11.1
 functools32 >= 3.2.3-2
 jinja2 >=2.6 
 
+# matrix-sdk-py
+git+ssh://git@github.com/adjoint-io/matrix-sdk-py.git
+
 # Testing
 pytest == 3.0.6

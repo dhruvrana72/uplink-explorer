@@ -8,6 +8,8 @@ def formatPrec(n, prec):
 def printer(val, hlight):
     """
     Print value in console and highlight type
+    val - value to print
+    hlight - title it results or whatever
     """
 
     highlight = "========= {} =========".format(hlight)
