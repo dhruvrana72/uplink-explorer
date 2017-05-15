@@ -7,5 +7,11 @@ jinja2 >=2.6
 # matrix-sdk-py
 git+ssh://git@github.com/adjoint-io/matrix-sdk-py.git
 
+
 # Testing
 pytest == 3.0.6
+
+# qr codes
+git+git://github.com/lincolnloop/python-qrcode.git
+git+git://github.com/ojii/pymaging.git#egg=pymaging
+git+git://github.com/ojii/pymaging-png.git#egg=pymaging-png

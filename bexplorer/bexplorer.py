@@ -7,11 +7,11 @@ import random
 from jinja2 import Environment, FileSystemLoader
 from flask import Flask, request, session, g, redirect, render_template, \
     url_for, abort, flash, jsonify
-
+import logging
 import codecs
 from matrix.session import MatrixSession
 from matrix.utils import ecdsa_new
-from utils import formatPrec, printer
+from utils import formatPrec, printer, make_qrcode
 
 # set app
 app = Flask(__name__)
@@ -181,9 +181,17 @@ def create_account():
     privkey = skey.to_string()
     private_key_hex = codecs.encode(privkey, 'hex')
 
-    matrix.create_account(privkey=private_key_hex)
+    newaccount = matrix.create_account(privkey=private_key_hex)
     res = matrix.accounts()
     accounts = handle_results(res)
+
+    #=======
+    # pubkey = newaccount["contents"]["publicKey"]
+    # addr = newaccount["contents"]["address"]
+
+    # pubkey_qr = make_qrcode(pubkey, "pubKey")
+    # addr_qr = make_qrcode(addr, "address")
+    #=======
 
     return render_template('accounts.html', accounts=accounts)
 
@@ -195,11 +203,16 @@ def account_by_address():
     res = matrix.getaccount(address)
 
     accinfo = handle_results(res)
+    pubkey = accinfo["publicKey"]
+    addr = accinfo["address"]
+
+    pubkey_qr = make_qrcode(pubkey, "pubKey")
+    addr_qr = make_qrcode(addr, "address")
 
     res = matrix.accounts()
     accounts = handle_results(res)
 
-    return render_template('accounts.html', accounts=accounts, accinfo=accinfo)
+    return render_template('accounts.html', accounts=accounts, accinfo=accinfo, pubkey_qr=pubkey_qr, addr_qr=addr_qr)
 
 
 @app.route('/assets', methods=['GET', 'POST'])
