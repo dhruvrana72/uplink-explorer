@@ -1,0 +1,60 @@
+{% extends "layout.html" %} {% block body %}
+
+<main class="mdl-layout__content">
+    <div class="page-content">
+        <br>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--8-col">
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                            <th class="mdl-data-table__cell--non-numeric">Type</th>
+                            <th class="mdl-data-table__cell--non-numeric">Action</th>
+                            <th class="mdl-data-table__cell--non-numeric">Asset Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">From</th>
+                            <th class="mdl-data-table__cell--non-numeric">To</th>
+                            <th class="mdl-data-table__cell--non-numeric">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if pending is not none %} {% for tx in pending.transactions %}
+                        <tr>
+                            <td>{{tx.timestamp | datetimeformat}}</td>
+                            <td>{{tx.header.tag}}</td>
+                            <td>{{tx.header.contents.tag}}</td>
+                            <td id="{{tx.header.contents.contents.assetAddr | shorten}}">{{tx.header.contents.contents.assetAddr | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.header.contents.contents.assetAddr | shorten}}">
+                                    {{tx.header.contents.contents.assetAddr}}
+                                </div>
+                            </td>
+                            <td id="{{tx.from | shorten}}">{{tx.from | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.from | shorten}}">
+                                    {{tx.from}}
+                                </div>
+                            </td>
+                            <td id="{{tx.header.contents.contents.toAddr | shorten}}">{{tx.header.contents.contents.toAddr | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.header.contents.contents.toAddr | shorten}}">
+                                    {{tx.header.contents.contents.toAddr}}
+                                </div>
+                            </td>
+                            <td>{{tx.header.contents.contents.balance}}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">No pending transactions</td>
+                        </tr>
+                        {% endfor %} {% else %}
+                        <tr>
+                            <td>No blocks Created Yet</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}

@@ -10,9 +10,9 @@ from flask import Flask, request, session, g, redirect, render_template, \
 import logging
 import codecs
 from matrix.session import MatrixSession
-from matrix.utils import ecdsa_new
-from utils import formatPrec, printer, make_qrcode
-
+from matrix.utils import ecdsa_new, make_qrcode
+from utils import formatPrec, printer, save_key, read_key
+import base64
 # set app
 app = Flask(__name__)
 # matrix = MatrixSession(addr='35.187.112.104')
@@ -101,7 +101,7 @@ def datetimeformat(unix_timestamp):
     # print unix_timestamp
     # print '---------------'
     """Filter for converting unix time to human readable"""
-    return time.strftime('%m/%d/%Y, %I:%M %p', time.localtime(unix_timestamp))
+    return time.strftime('%m/%d/%Y, %I:%M:%S %p ', time.localtime(unix_timestamp))
 
 
 def handle_results(res):
@@ -141,7 +141,6 @@ def show_index():
 def show_transactions():
     """Present a table of transactions"""
     block_id = request.form['submit']
-
     res = matrix.transactions(block_id)
     transactions = handle_results(res)
 
@@ -179,19 +178,26 @@ def create_account():
 
     pubkey, skey = ecdsa_new()
     privkey = skey.to_string()
+    x = skey.privkey.public_key.point
+    y = base64.b64encode(privkey)
+
+    print('===privkey===')
+    print(y)
+    print('===skeypoint===')
+    print(x)
+
     private_key_hex = codecs.encode(privkey, 'hex')
 
     newaccount = matrix.create_account(privkey=private_key_hex)
+
     res = matrix.accounts()
     accounts = handle_results(res)
 
-    #=======
-    # pubkey = newaccount["contents"]["publicKey"]
-    # addr = newaccount["contents"]["address"]
-
-    # pubkey_qr = make_qrcode(pubkey, "pubKey")
-    # addr_qr = make_qrcode(addr, "address")
-    #=======
+    # save pem of private key by short address account address as name
+    address = newaccount['contents']['address']
+    privkey_pem = skey.to_pem()
+    name = address[0:10]
+    save_key(privkey_pem, name)
 
     return render_template('accounts.html', accounts=accounts)
 
@@ -229,11 +235,15 @@ def create_asset():
     """Create a new asset"""
 
     name = request.form['name']
-    supply = request.form['supply']
+    supply = int(request.form['supply'])
     asset_type = request.form['asset_type']
     reference = request.form['reference']
+    issuer = request.form['issuer']
 
-    matrix.create_asset(name, supply, asset_type, reference)
+    result = matrix.create_asset(
+        name, supply, asset_type, reference, issuer)
+    newasset = handle_results(result)
+    printer(newasset, 'New Asset')
 
     res = matrix.assets()
     assets = handle_results(res)
@@ -284,3 +294,13 @@ def create_contract():
     contracts = handle_results(res)
 
     return render_template('contracts.html', contracts=contracts, new_contract_addr=new_contract_addr)
+
+
+@app.route('/transactions/pending', methods=['GET', 'POST'])
+def pending_transactions():
+
+    res = matrix.get_mempool()
+    pending_tx = handle_results(res)
+
+    printer(pending_tx, "PENDING")
+    return render_template('pending_tx.html', pending=pending_tx)

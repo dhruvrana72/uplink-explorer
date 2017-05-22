@@ -77,7 +77,10 @@
                     </div>
                     <form action="{{ url_for('create_asset')}}" method="post">
                         <div class="mdl-card__supporting-text">
-
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" id="issuer" required name="issuer">
+                                <label class="mdl-textfield__label" for="issuer">Issuer</label>
+                            </div>
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                                 <input class="mdl-textfield__input" type="text" id="name" required name="name">
                                 <label class="mdl-textfield__label" for="name">Name</label>

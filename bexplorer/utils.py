@@ -28,12 +28,13 @@ if __name__ == '__main__':
     print formatPrec(0, 100.3)
 
 
-def make_qrcode(data, name):
-    """makes qr codes"""
-    img = qrcode.make(data, image_factory=PymagingImage)
-    filename = "{}.png".format(name)
-    img.save(open(filename, "w+"))
+def save_key(sk, name):
+    filename = "{}.pem".format(name)
+    with open(filename, "wb") as file:
+        file.write(sk)
+    return 'name'
 
-    with open(filename, "rb") as image:
-        encoded_img = base64.b64encode(image.read())
-    return encoded_img
+
+def read_key(filename):
+    with open(filename, "rb"):
+        return file.read()
