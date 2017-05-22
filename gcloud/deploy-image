@@ -1,3 +1,5 @@
+cp ~/.ssh/id_rsa .
 docker build -t bex:latest .
+rm id_rsa
 docker tag bex:latest eu.gcr.io/elated-bolt-163611/bex:latest
 gcloud docker -- push eu.gcr.io/elated-bolt-163611/bex:latest

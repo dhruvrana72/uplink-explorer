@@ -4,12 +4,16 @@ requests == 2.11.1
 functools32 >= 3.2.3-2
 jinja2 >=2.6 
 
-# matrix-sdk-py
-git+ssh://git@github.com/adjoint-io/matrix-sdk-py.git
-
+# crypto
+base58 == 0.2.5
+pysha3 == 1.0.2
 
 # Testing
 pytest == 3.0.6
+
+# matrix-sdk-py
+git+ssh://git@github.com/adjoint-io/matrix-sdk-py.git@master
+
 
 # qr codes
 git+git://github.com/lincolnloop/python-qrcode.git
