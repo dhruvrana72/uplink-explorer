@@ -26,16 +26,16 @@
                                 <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
                                   fingerprint
                                 </span>
-                                <span class="mdl-chip__text">{{ass.address | shorten}}</span>
+                                <span class="mdl-chip__text" onclick="copyToClipboard('{{ass.address | shorten}}copy')">{{ass.address | shorten}}</span>
                                 </span>
-                                <div class="mdl-tooltip" data-mdl-for="{{ass.address | shorten}}">
+                                <div id="{{ass.address | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{ass.address | shorten}}">
                                     {{ass.address}}
                                 </div>
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">{{ass.asset.name}}</td>
-                            <td ID="{{ass.asset.issuer | shorten}}" class="mdl-data-table__cell--non-numeric">
+                            <td ID="{{ass.asset.issuer | shorten}}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{ass.asset.issuer | shorten}}copy')">
                                 {{ass.asset.issuer | shorten}}
-                                <div class="mdl-tooltip" data-mdl-for="{{ass.asset.issuer | shorten}}">
+                                <div id="{{ass.asset.issuer | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{ass.asset.issuer | shorten}}">
                                     {{ass.asset.issuer}}
                                 </div>
                             </td>
@@ -69,7 +69,7 @@
 
 
             </div>
-            <div class="mdl-cell cml-cell--5-col">
+            <div class="mdl-cell mdl-cell--5-col">
                 <!--New Asset-->
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
                     <div class="mdl-card__title">
@@ -190,4 +190,18 @@
 
     </div>
 </main>
+
+
+
+<script>
+    // Click to copy for addresses
+    function copyToClipboard(elementId) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+    }
+</script>
 {% endblock %}

@@ -279,7 +279,10 @@ def show_contracts():
 
     contracts = handle_results(res)
     # print contracts
-    return render_template('contracts.html', contracts=contracts)
+
+    script = "global x = 0; \nlocal y = 0; \nasset z = 0xR8a7C66BwPfw9wGXSqZDVtABHvLfcoGorbafuTJ2CjnobPg3yvGRNf3tY8vZ; \n \nsetX () { \n  x = 42; \n} \n \ngetX () { \n  return x; \n}"
+
+    return render_template('contracts.html', contracts=contracts, script=script)
 
 
 @app.route('/contracts/create', methods=['GET', 'POST'])
@@ -293,7 +296,7 @@ def create_contract():
     res = matrix.contracts()
     contracts = handle_results(res)
 
-    return render_template('contracts.html', contracts=contracts, new_contract_addr=new_contract_addr)
+    return render_template('contracts.html', contracts=contracts, new_contract_addr=new_contract_addr, script=script)
 
 
 @app.route('/transactions/pending', methods=['GET', 'POST'])

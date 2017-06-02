@@ -20,8 +20,18 @@
                         {% for tx in transactions %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">{{tx.timestamp | datetimeformat}}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{tx.from | shorten}} </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{tx.fromPub | shorten}}</td>
+
+                            <td id="{{tx.from |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.from | shorten}}copy')">{{tx.from | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.from | shorten }}" id="{{tx.from | shorten }}copy">
+                                    {{tx.from}}
+                                </div>
+                            </td>
+
+                            <td id="{{tx.fromPub |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.fromPub | shorten_key}}copy')">{{tx.fromPub | shorten_key}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.fromPub | shorten }}" id="{{tx.fromPub | shorten_key }}copy">
+                                    {{tx.fromPub}}
+                                </div>
+                            </td>
 
                             {% if tx.header.tag is equalto 'TxAsset' %}
                             <td class="mdl-data-table__cell--non-numeric">Asset</td>
@@ -140,4 +150,15 @@
 
     </div>
 </main>
+<script>
+    // Click to copy for addresses
+    function copyToClipboard(elementId) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+    }
+</script>
 {% endblock %}

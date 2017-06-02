@@ -55,3 +55,15 @@ button.mdl-chip {
     color: white;
     bottom: 0;
 }
+
+#script {
+    /*padding: 20px;*/
+    font-family: monospace;
+    font-size: 12px;
+    color: white;
+    background: #484848;
+}
+
+.view-script {
+    font-size: 12px;
+}

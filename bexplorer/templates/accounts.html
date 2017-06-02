@@ -16,21 +16,21 @@
                     <tbody>
                         {% if accounts is not none %} {% for acc in accounts %}
                         <tr>
-                            <td id="{{acc.publicKey | shorten_key}}" class="mdl-data-table__cell--non-numeric">{{acc.publicKey | shorten_key}}
-                                <div class="mdl-tooltip" data-mdl-for="{{acc.publicKey | shorten_key}}">
+                            <td id="{{acc.publicKey | shorten_key}}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{acc.publicKey | shorten}}copy')">{{acc.publicKey | shorten_key}}
+                                <div class="mdl-tooltip" data-mdl-for="{{acc.publicKey | shorten_key}}" id="{{acc.publicKey | shorten }}copy">
                                     {{acc.publicKey}}
                                 </div>
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">{{acc.timezone}}</td>
                             <td class="mdl-data-table__cell--non-numeric">
                                 <form action="{{ url_for('account_by_address') }}" method="post">
-                                    <button id="{{acc.address | shorten}}" type="submit" name="submit" value="{{acc.address}}" class="mdl-chip">
+                                    <button id="{{acc.address | shorten}}" type="submit" name="submit" value="{{acc.address}}" class="mdl-chip" onclick="copyToClipboard('{{acc.address | shorten}}copy')">
                                       <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
                                       fingerprint
                                       </span>
                                       <span class="mdl-chip__text">{{acc.address | shorten}}</span>
                                     </button>
-                                    <div class="mdl-tooltip" data-mdl-for="{{acc.address | shorten}}">
+                                    <div class="mdl-tooltip" data-mdl-for="{{acc.address | shorten}}" id="{{acc.address | shorten}}copy">
                                         {{acc.address}}
                                     </div>
                                 </form>
@@ -91,4 +91,17 @@
     </form>
 
 </main>
+
+<script>
+    // Click to copy for addresses
+    function copyToClipboard(elementId) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+    }
+</script>
+
 {% endblock %}
