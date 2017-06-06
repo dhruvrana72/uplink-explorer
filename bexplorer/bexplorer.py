@@ -13,6 +13,7 @@ from matrix.session import MatrixSession
 from matrix.utils import ecdsa_new, make_qrcode
 from utils import formatPrec, printer, save_key, read_key
 import base64
+
 # set app
 app = Flask(__name__)
 # matrix = MatrixSession(addr='35.187.112.104')
