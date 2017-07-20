@@ -1,4 +1,12 @@
 import pytest
 
-def test_config():
-    assert True
+from uplink import *
+from uplink.session import UplinkSession
+
+
+def test_setup():
+    rpc = UplinkJsonRpc()
+    return True
+
+if __name__ == '__main__':
+    basic()

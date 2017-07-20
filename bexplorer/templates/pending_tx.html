@@ -12,7 +12,7 @@
                             <th class="mdl-data-table__cell--non-numeric">Type</th>
                             <th class="mdl-data-table__cell--non-numeric">Action</th>
                             <th class="mdl-data-table__cell--non-numeric">Asset Address</th>
-                            <th class="mdl-data-table__cell--non-numeric">From</th>
+                            <th class="mdl-data-table__cell--non-numeric">from_</th>
                             <th class="mdl-data-table__cell--non-numeric">To</th>
                             <th class="mdl-data-table__cell--non-numeric">Balance</th>
                         </tr>
@@ -21,16 +21,16 @@
                         {% if pending is not none %} {% for tx in pending.transactions %}
                         <tr>
                             <td>{{tx.timestamp | datetimeformat}}</td>
-                            <td>{{tx.header.tag}}</td>
+                            <td>{{tx.header.type}}</td>
                             <td>{{tx.header.contents.tag}}</td>
                             <td id="{{tx.header.contents.contents.assetAddr | shorten}}">{{tx.header.contents.contents.assetAddr | shorten}}
                                 <div class="mdl-tooltip" data-mdl-for="{{tx.header.contents.contents.assetAddr | shorten}}">
                                     {{tx.header.contents.contents.assetAddr}}
                                 </div>
                             </td>
-                            <td id="{{tx.from | shorten}}">{{tx.from | shorten}}
-                                <div class="mdl-tooltip" data-mdl-for="{{tx.from | shorten}}">
-                                    {{tx.from}}
+                            <td id="{{tx.from_ | shorten}}">{{tx.from_ | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.from_ | shorten}}">
+                                    {{tx.from_}}
                                 </div>
                             </td>
                             <td id="{{tx.header.contents.contents.toAddr | shorten}}">{{tx.header.contents.contents.toAddr | shorten}}

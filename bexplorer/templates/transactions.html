@@ -57,7 +57,7 @@
                             {% endif %}
                             <td>
                                 {% if tx.header.contents.tag is not equalto 'CreateContract' %}
-                                <form action="{{ url_for('show_tx_details') }}" method="post">
+                                <form action="{{ url_for('public.show_tx_details') }}" method="post">
                                     <input class="hide" name="block_id" value="{{block_id}}" readonly/>
                                     <button id="{{'{}|{}'.format(tx.timestamp, tx.from)}}" type="submit" name="submit" value="{{tx}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                     <i class="material-icons">pageview</i>

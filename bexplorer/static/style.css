@@ -67,3 +67,7 @@ button.mdl-chip {
 .view-script {
     font-size: 12px;
 }
+
+.mdl-list__item {
+    padding: 0 16px;
+}

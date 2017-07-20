@@ -4,7 +4,7 @@
         <br>
 
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--5-col">
+            <div class="mdl-cell mdl-cell--4-col">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
@@ -16,14 +16,14 @@
                     <tbody>
                         {% if accounts is not none %} {% for acc in accounts %}
                         <tr>
-                            <td id="{{acc.publicKey | shorten_key}}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{acc.publicKey | shorten}}copy')">{{acc.publicKey | shorten_key}}
-                                <div class="mdl-tooltip" data-mdl-for="{{acc.publicKey | shorten_key}}" id="{{acc.publicKey | shorten }}copy">
-                                    {{acc.publicKey}}
+                            <td id="{{acc.public_key | shorten_key}}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{acc.public_key | shorten}}copy')">{{acc.public_key | shorten_key}}
+                                <div class="mdl-tooltip" data-mdl-for="{{acc.public_key | shorten_key}}" id="{{acc.public_key | shorten }}copy">
+                                    {{acc.public_key}}
                                 </div>
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">{{acc.timezone}}</td>
                             <td class="mdl-data-table__cell--non-numeric">
-                                <form action="{{ url_for('account_by_address') }}" method="post">
+                                <form action="{{ url_for('public.account_by_address') }}" method="post">
                                     <button id="{{acc.address | shorten}}" type="submit" name="submit" value="{{acc.address}}" class="mdl-chip" onclick="copyToClipboard('{{acc.address | shorten}}copy')">
                                       <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
                                       fingerprint
@@ -48,16 +48,51 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mdl-cell mdl-cell--4-col">
+                {% if newaccount %}
+                <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__title mdl-card--expand">
+                        <h2 class="mdl-card__title-text">New Account Address: {{newaccount.address | shorten}}</h2>
+                    </div>
+                    <div class="mdl-card__supporting-text">
+                        <h6>Public_key</h6>
+                        <p style="word-wrap:break-word">{{newaccount.public_key}}
+                        </p>
+                        <img style="width:150px" src="data:image/png;base64,{{new_acct_pubkey_qr | safe}}" />
 
-            <div class="mdl-cell mdl-cell--5-col">
+                        <h6>Full Address</h6>
+                        {{newaccount.address}}<br/>
+                        <img style="width:150px" src="data:image/png;base64,{{new_acct_addr_qr | safe}}" />
+                        <ul class="demo-list-two mdl-list">
+                            {% for key, value in newaccount.metadata.iteritems() %}
+                            <li class="mdl-list__item mdl-list__item--two-line">
+                                <span class="mdl-list__item-primary-content">
+                                <span>{{key}}</span>
+                                <span class="mdl-list__item-sub-title">{{value}}</span>
+                                </span>
+                                </span>
+                            </li>
+                            {% else %}
+                            <li>No Metadata Available</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% else %}
+                <div></div>
+                {% endif %}
+            </div>
+
+            <div class="mdl-cell mdl-cell--4-col">
                 {% if accinfo %}
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
                     <div class="mdl-card__title mdl-card--expand">
                         <h2 class="mdl-card__title-text">Account Address: {{accinfo.address | shorten}}</h2>
                     </div>
                     <div class="mdl-card__supporting-text">
-                        <h6>PublicKey</h6>
-                        <pre><code>{{accinfo.publicKey}}</code></pre>
+                        <h6>Public key</h6>
+                        <p style="word-wrap:break-word">{{accinfo.public_key}}
+                        </p>
                         <img style="width:150px" src="data:image/png;base64,{{pubkey_qr | safe}}" />
 
                         <h6>Full Address</h6>
@@ -84,7 +119,7 @@
             </div>
         </div>
     </div>
-    <form action="{{ url_for('create_account')}}" method="post">
+    <form action="{{ url_for('public.create_account')}}" method="post">
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored circle-btn" type="submit" name="submit" value="create_account">
             <i class="material-icons">add</i>
         </button>

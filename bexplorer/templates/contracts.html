@@ -14,7 +14,7 @@
                     <small>{{ new_contract_addr }}</small>
                 </div>
                 {% endif %}
-                <form action="{{ url_for('create_contract') }}" method="post">
+                <form action="{{ url_for('public.create_contract') }}" method="post">
                     <div class="mdl-textfield mdl-js-textfield">
                         <textarea class="mdl-textfield__input" name="script" required type="text" rows="25" id="script">{{script}}</textarea>
                         <label class="mdl-textfield__label" for="script">Enter Contract Script...</label>
@@ -42,41 +42,32 @@
                         {{con.address}}
                         <h6>Script</h6>
                         <div class="mdl-card__actions mdl-card--border">
-                            <pre contenteditable="false"><code class="view-script">{{con.contract.script}}</code></pre>
+                            <pre contenteditable="false"><code class="view-script">{{con.script}}</code></pre>
                         </div>
                     </div>
-                    <div class="mdl-cell mdl-cell--2-col">
-                        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="float:right">
-                            <thead>
-                                <tr>
-                                    <th class="mdl-data-table__cell--non-numeric">Key</th>
-                                    <th class="mdl-data-table__cell--non-numeric">Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for key, value in con.contract.storage.iteritems() %}
-                                <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
-                                    {% if value.tag is equalto 'VAddress' %}
-                                    <td id="{{value.contents | shorten}}">
-                                        {{value.contents | shorten}}
-                                        <div class="mdl-tooltip" data-mdl-for="{{value.contents | shorten}}">
-                                            {{value.contents}}
-                                        </div>
-                                    </td>
+                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                        <thead>
+                            <tr>
+                                <th class="mdl-data-table__cell--non-numeric">Key</th>
 
-                                    {% else %}
-                                    <td>{{value}}</td>
-                                    {% endif %}
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td>Nothing in storage</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                <th class="mdl-data-table__cell--non-numeric">Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, value in con.storage.iteritems() %}
+                            <tr>
+                                {% if not value.tag is none %}
+                                <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
+                                <td>{{value | remove_extra_value}}</td>
+                                {% else %} {% endif %}
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td>Nothing in storage</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

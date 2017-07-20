@@ -11,8 +11,8 @@ pysha3 == 1.0.2
 # Testing
 pytest == 3.0.6
 
-# matrix-sdk-py
-git+ssh://git@github.com/adjoint-io/matrix-sdk-py.git@master
+# uplink-sdk-py
+git+ssh://git@github.com/adjoint-io/uplink-sdk-py.git@master
 
 
 # qr codes
