@@ -64,15 +64,15 @@
                         {{newaccount.address}}<br/>
                         <img style="width:150px" src="data:image/png;base64,{{new_acct_addr_qr | safe}}" />
                         <ul class="demo-list-two mdl-list">
-                            {% for key, value in newaccount.metadata.iteritems() %}
+                            {% for meta in newaccount.metadata %} {% for key, val in meta.iteritems() %}
                             <li class="mdl-list__item mdl-list__item--two-line">
                                 <span class="mdl-list__item-primary-content">
-                                <span>{{key}}</span>
+                                    <span>{{key}}</span>
                                 <span class="mdl-list__item-sub-title">{{value}}</span>
                                 </span>
                                 </span>
                             </li>
-                            {% else %}
+                            {% endfor %} {% else %}
                             <li>No Metadata Available</li>
                             {% endfor %}
                         </ul>
@@ -99,11 +99,11 @@
                         {{accinfo.address}}<br/>
                         <img style="width:150px" src="data:image/png;base64,{{addr_qr | safe}}" />
                         <ul class="demo-list-two mdl-list">
-                            {% for key, value in accinfo.metadata.iteritems() %}
+                            {% for meta in accinfo.metadata %}
                             <li class="mdl-list__item mdl-list__item--two-line">
                                 <span class="mdl-list__item-primary-content">
-                                <span>{{key}}</span>
-                                <span class="mdl-list__item-sub-title">{{value}}</span>
+                                <span>{{meta}}</span>
+                                <!-- <span class="mdl-list__item-sub-title">{{value}}</span> -->
                                 </span>
                                 </span>
                             </li>

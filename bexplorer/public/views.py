@@ -10,9 +10,9 @@ import codecs
 from flask import Flask, Blueprint, redirect, render_template, request, url_for, current_app, jsonify, flash
 
 from bexplorer.extensions import uplink
-from uplink.utils import ecdsa_new, make_qrcode
 from bexplorer.utils import printer, save_key, read_key
 
+from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
 
 blueprint = Blueprint(
     'public', __name__, static_folder='../static', template_folder='../templates')
@@ -77,21 +77,30 @@ def create_account():
 
     pubkey, skey = ecdsa_new()
     privkey = skey.to_string()
+    uplink.set_key(skey, pubkey)
 
-    private_key_hex = codecs.encode(privkey, 'hex')
-    new_account = uplink.create_account(privkey=private_key_hex)
+    uplink.create_account(new_pubkey=pubkey, metadata={})
+    public_key_hex = codecs.encode(pubkey.to_string(), 'hex')
 
     new_acct_pubkey_qr = make_qrcode(
-        new_account.public_key, "new_acct_pubKey")
-    new_acct_addr_qr = make_qrcode(new_account.address, "new_acct_address")
+        public_key_hex, "new_acct_pubKey")
+
+    acct_addr = derive_account_address(pubkey)
+
+    new_acct_addr_qr = make_qrcode(acct_addr, "new_acct_address")
 
     accounts = uplink.accounts()
 
     # save pem of private key by short address account address as name
-    address = new_account.address
     privkey_pem = skey.to_pem()
-    name = address[0:10]
+    name = acct_addr[0:10]
     save_key(privkey_pem, name)
+
+    new_account = None
+    while uplink.getaccount(acct_addr) is False:
+        time.sleep(3)
+        if uplink.getaccount(acct_addr) is not False:
+            new_account = uplink.getaccount(acct_addr)
 
     return render_template('accounts.html', accounts=accounts, newaccount=new_account, new_acct_pubkey_qr=new_acct_pubkey_qr, new_acct_addr_qr=new_acct_addr_qr)
 
@@ -130,13 +139,19 @@ def create_asset():
     asset_type = request.form['asset_type']
     reference = request.form['reference']
     issuer = request.form['issuer']
+    from_address = issuer
 
     newasset_addr = uplink.create_asset(
-        name, supply, asset_type, reference, issuer)
-
-    newasset_details = uplink.getasset(newasset_addr)
+        from_address, name, supply, asset_type, reference, issuer, precision=0)
 
     assets = uplink.assets()
+
+    newasset_details = None
+    while uplink.getasset(newasset_addr) is False:
+        time.sleep(3)
+        asset_details = uplink.getasset(newasset_addr)
+        if asset_details:
+            print(newasset_details)
 
     return render_template('assets.html', assets=assets, new_asset=newasset_details, new_asset_address=newasset_addr)
 

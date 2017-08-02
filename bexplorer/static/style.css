@@ -40,6 +40,8 @@ button.mdl-chip {
     position: fixed;
     bottom: 50px;
     right: 50px;
+    z-index: 1;
+    box-shadow: 10px 10px 14px -8px rgba(0, 0, 0, 0.75);
 }
 
 .mdl-textfield {
