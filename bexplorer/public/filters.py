@@ -65,14 +65,13 @@ def convert(context, value, atype):
         convert asset type fractional to fixed precision
         FPREC is 10^(-7) or 0.0000001
     """
-
     if value:
         if atype.type == 'Discrete':
             return value
 
         if atype.type == 'Fractional':
 
-            prec = atype.precision
+            prec = atype.precision or 0
             result = formatPrec(prec, value)
             return result
 
