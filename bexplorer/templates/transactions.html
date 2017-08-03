@@ -11,7 +11,7 @@
                         <tr>
                             <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
                             <th class="mdl-data-table__cell--non-numeric">From Address</th>
-                            <th class="mdl-data-table__cell--non-numeric">From Public Key</th>
+                            <th class="mdl-data-table__cell--non-numeric">Signature</th>
                             <th class="mdl-data-table__cell--non-numeric">Transaction Type</th>
                             <th class="mdl-data-table__cell--non-numeric">Action</th>
                         </tr>
@@ -19,17 +19,18 @@
                     <tbody>
                         {% for tx in transactions %}
                         <tr>
+
                             <td class="mdl-data-table__cell--non-numeric">{{tx.timestamp | datetimeformat}}</td>
 
-                            <td id="{{tx.from |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.from | shorten}}copy')">{{tx.from | shorten}}
-                                <div class="mdl-tooltip" data-mdl-for="{{tx.from | shorten }}" id="{{tx.from | shorten }}copy">
-                                    {{tx.from}}
+                            <td id="{{tx.origin.contents |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.origin | shorten}}copy')">{{tx.origin | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.origin | shorten }}" id="{{tx.origin.contents | shorten }}copy">
+                                    {{tx.origin.contents}} {{tx.origin.tag}}
                                 </div>
                             </td>
 
-                            <td id="{{tx.fromPub |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.fromPub | shorten_key}}copy')">{{tx.fromPub | shorten_key}}
-                                <div class="mdl-tooltip" data-mdl-for="{{tx.fromPub | shorten }}" id="{{tx.fromPub | shorten_key }}copy">
-                                    {{tx.fromPub}}
+                            <td id="{{tx.signature |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.signature | shorten_key}}copy')">{{tx.signature | shorten_key}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.signature | shorten }}" id="{{tx.signature | shorten_key }}copy">
+                                    {{tx.signature}}
                                 </div>
                             </td>
 
@@ -37,10 +38,6 @@
                             <td class="mdl-data-table__cell--non-numeric">Asset</td>
                             <td class="mdl-data-table__cell--non-numeric">{{tx.header.contents.tag}}</td>
 
-                            <!--From | Balance | To-->
-                            <!--<td>{{tx.header.contents.contents.fromAddr | shorten}}</td>
-                            <td>{{tx.header.contents.contents.balance}}</td>
-                            <td>{{tx.header.contents.contents.toAddr | shorten}}</td>-->
 
                             {% endif %} {% if tx.header.tag is equalto 'TxContract' %}
                             <td class="mdl-data-table__cell--non-numeric">Contract</td>
@@ -48,25 +45,14 @@
 
 
                             {% endif %} {% if tx.header.tag is equalto 'TxAccount' %}
-                            <td class="mdl-data-table__cell--non-numeric">Address</td>
+                            <td class="mdl-data-table__cell--non-numeric">Account</td>
                             <td class="mdl-data-table__cell--non-numeric">{{tx.header.contents.tag}}</td>
 
-                            <!--Created Account-->
-                            <!--<td>{{tx.header.contents.contents.account.address | shorten}}</td>-->
 
                             {% endif %}
                             <td>
                                 {% if tx.header.contents.tag is not equalto 'CreateContract' %}
-                                <form action="{{ url_for('public.show_tx_details') }}" method="post">
-                                    <input class="hide" name="block_id" value="{{block_id}}" readonly/>
-                                    <button id="{{'{}|{}'.format(tx.timestamp, tx.from)}}" type="submit" name="submit" value="{{tx}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-                                    <i class="material-icons">pageview</i>
-                                    </button>
-                                    <div class="mdl-tooltip" data-mdl-for="{{'{}|{}'.format(tx.timestamp, tx.from)}}">
-                                        See transactions details
-                                    </div>
-                                </form>
-                                {% endif %}
+                                <a href="{{url_for('public.show_tx_details', block_id=block_id, tx_id=tx.signature)}}"> <i class="material-icons">pageview</i></a>{% endif %}
                             </td>
 
                         </tr>
@@ -120,9 +106,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{details.header.contents.contents.account.address | shorten}}</td>
-                            <td>{{details.header.contents.contents.account.timezone}}</td>
-                            <td>{{details.header.contents.contents.account.publicKey | shorten}}</td>
+                            <td>{{details.header.contents.contents.origin | shorten}}</td>
+                            <td>{{details.header.contents.contents.timezone}}</td>
+                            <td>{{details.header.contents.contents.pubKey | shorten}}</td>
 
                         </tr>
                     </tbody>
@@ -136,10 +122,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            {% for key, value in details.header.contents.contents.account.metadata.iteritems() %}
-                            <td><b>{{key}}:</b></td>
-                            <td>{{value}}</td>
-                            {% endfor %}
+
                         </tr>
                     </tbody>
                     {% endif %}

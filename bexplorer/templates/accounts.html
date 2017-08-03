@@ -121,7 +121,11 @@
     </div>
     <form action="{{ url_for('public.create_account')}}" method="post">
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored circle-btn" type="submit" name="submit" value="create_account">
+            {% if spinner %}
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+            {% else %}
             <i class="material-icons">add</i>
+            {% endif %}
         </button>
     </form>
 

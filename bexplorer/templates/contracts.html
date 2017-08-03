@@ -15,8 +15,14 @@
                 </div>
                 {% endif %}
                 <form action="{{ url_for('public.create_contract') }}" method="post">
+                    <div class="mdl-card__supporting-text">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="issuer" required name="issuer">
+                            <label class="mdl-textfield__label" for="issuer">Issuer</label>
+                        </div>
+                    </div>
                     <div class="mdl-textfield mdl-js-textfield">
-                        <textarea class="mdl-textfield__input" name="script" required type="text" rows="25" id="script">{{script}}</textarea>
+                        <textarea class="mdl-textfield__input" name="script" type="text" rows="25" id="script">{{script}}</textarea>
                         <label class="mdl-textfield__label" for="script">Enter Contract Script...</label>
                     </div>
                     <div class="mdl-card__actions mdl-card--border">
@@ -76,7 +82,7 @@
         <h5>No contracts available</h5>
         {% endfor %} {% else %}
         <div class="mdl-cell mdl-cell--5-col mdl-cell--7-offset">
-            <h5>No Contracts Created Yet</h5>
+            <h5 style="text-align: right; padding-right:30px">No Contracts Created Yet</h5>
         </div>
         {% endif %}
     </div>

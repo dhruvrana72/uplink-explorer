@@ -35,14 +35,8 @@
                                 </div>
                             </td>
                             <td>
-                                <form action="{{ url_for('public.show_transactions') }}" method="post">
-                                    <button id="{{'trans {}'.format(block.index)}}" type="submit" name="submit" value="{{block.index}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-                                    <i class="material-icons">pageview</i>
-                                    </button>
-                                    <div class="mdl-tooltip" data-mdl-for="{{'trans {}'.format(block.index)}}">
-                                        See transactions in block
-                                    </div>
-                                </form>
+                                <a href="{{ url_for('public.show_transactions', block_id = block.index) }}"><i class="material-icons">pageview</i></a>
+
                             </td>
                         </tr>
                         {% else %}

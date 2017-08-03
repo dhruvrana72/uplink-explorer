@@ -104,9 +104,10 @@ def to_pretty_json(context, value):
 
 @jinja2.contextfilter
 @blueprint.app_template_filter()
-def datetimeformat(context, unix_timestamp):
-    """Filter for converting unix time to human readable"""
-    return time.strftime('%m/%d/%Y, %I:%M:%S %p ', time.localtime(unix_timestamp))
+def datetimeformat(context, timestamp):
+    """Filter for converting timestamp to human readable"""
+    print(timestamp)
+    return time.strftime('%m/%d/%Y, %I:%M:%S %p', time.localtime(timestamp / 1000000))
 
 
 blueprint.add_app_template_filter(datetimeformat)

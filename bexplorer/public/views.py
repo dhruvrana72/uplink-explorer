@@ -10,7 +10,9 @@ import codecs
 from flask import Flask, Blueprint, redirect, render_template, request, url_for, current_app, jsonify, flash
 
 from bexplorer.extensions import uplink
-from bexplorer.utils import printer, save_key, read_key
+from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address, \
+    read_key, save_key
+from uplink.exceptions import UplinkJsonRpcError
 
 from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
 
@@ -21,7 +23,7 @@ blueprint = Blueprint(
 def handle_results(res):
     """Handles successful or failed results of new contract interactions"""
 
-    if res['errorMsg']:
+    if res.get("errorMsg"):
         jsonified = jsonify(res)
         result = json.loads(jsonified.data)
         error = 'Error: {} : {}'.format(
@@ -32,7 +34,7 @@ def handle_results(res):
         return res
 
 
-@blueprint.route('/', methods=['GET', 'POST'])
+@blueprint.route('/', methods=['GET'])
 def show_index():
     """Main Index Page and blocks"""
 
@@ -41,24 +43,20 @@ def show_index():
     return render_template('index.html', blockset=blockset)
 
 
-@blueprint.route('/transactions', methods=['GET', 'POST'])
-def show_transactions():
+@blueprint.route('/blocks/<block_id>', methods=['GET'])
+def show_transactions(block_id):
     """Present a table of transactions"""
-    block_id = request.form['submit']
     transactions = uplink.transactions(block_id)
-
     return render_template('transactions.html', transactions=transactions, block_id=block_id)
 
 
-@blueprint.route('/transactions/details', methods=['GET', 'POST'])
-def show_tx_details():
+@blueprint.route('/blocks/<block_id>/transactions/<tx_id>', methods=['GET'])
+def show_tx_details(block_id, tx_id):
     """Present a table of transaction details"""
 
-    block_id = request.form['block_id']
     transactions = uplink.transactions(block_id)
 
-    res = request.form['submit']
-    details = eval(res)
+    details = filter(lambda tx: tx.signature == tx_id, transactions)[0]
 
     return render_template('transactions.html', transactions=transactions, block_id=block_id,
                            details=details)
@@ -76,33 +74,44 @@ def create_account():
     """Create an Account"""
 
     pubkey, skey = ecdsa_new()
-    privkey = skey.to_string()
-    uplink.set_key(skey, pubkey)
 
-    uplink.create_account(new_pubkey=pubkey, metadata={})
+    metadata = {}
+    acct = uplink.create_account(
+        private_key=skey,
+        public_key=pubkey,
+        from_address=None,
+        metadata=metadata,
+        timezone="GMT"
+    )
+
     public_key_hex = codecs.encode(pubkey.to_string(), 'hex')
-
     new_acct_pubkey_qr = make_qrcode(
         public_key_hex, "new_acct_pubKey")
 
     acct_addr = derive_account_address(pubkey)
-
     new_acct_addr_qr = make_qrcode(acct_addr, "new_acct_address")
-
-    accounts = uplink.accounts()
 
     # save pem of private key by short address account address as name
     privkey_pem = skey.to_pem()
-    name = acct_addr[0:10]
-    save_key(privkey_pem, name)
+    location = "./keys/{}".format(acct_addr)
+    save_key(privkey_pem, location)
 
-    new_account = None
-    while uplink.getaccount(acct_addr) is False:
-        time.sleep(3)
-        if uplink.getaccount(acct_addr) is not False:
-            new_account = uplink.getaccount(acct_addr)
+    count = 0
+    while True:
+        count += 1
+        time.sleep(1)
+        print(count)
+        if(count > 60):
+            flash("failed to create account", 'error')
+        try:
+            acct_detail = uplink.getaccount(acct_addr)
+            print("new account successfully created " + acct_detail.address)
+        except UplinkJsonRpcError:
+            continue
+        break
 
-    return render_template('accounts.html', accounts=accounts, newaccount=new_account, new_acct_pubkey_qr=new_acct_pubkey_qr, new_acct_addr_qr=new_acct_addr_qr)
+    accounts = uplink.accounts()
+    return render_template('accounts.html', accounts=accounts, newaccount=acct_detail, new_acct_pubkey_qr=new_acct_pubkey_qr, new_acct_addr_qr=new_acct_addr_qr)
 
 
 @blueprint.route('/accounts/address', methods=['GET', 'POST'])
@@ -139,21 +148,30 @@ def create_asset():
     asset_type = request.form['asset_type']
     reference = request.form['reference']
     issuer = request.form['issuer']
+
     from_address = issuer
+    location = "./keys/{}.pem".format(issuer)
+    private_key = read_key(location)
 
-    newasset_addr = uplink.create_asset(
-        from_address, name, supply, asset_type, reference, issuer, precision=0)
+    result, newasset_addr = uplink.create_asset(
+        private_key, from_address, name, supply, asset_type, reference, issuer, precision=0)
 
+    count = 0
+    while True:
+        count += 1
+        time.sleep(1)
+        print(count)
+        if(count > 60):
+            flash("failed to create account", 'error')
+        try:
+            asset_details = uplink.getasset(newasset_addr)
+            print("new asset successfully created " + asset_details.address)
+        except UplinkJsonRpcError:
+            continue
+        break
     assets = uplink.assets()
 
-    newasset_details = None
-    while uplink.getasset(newasset_addr) is False:
-        time.sleep(3)
-        asset_details = uplink.getasset(newasset_addr)
-        if asset_details:
-            print(newasset_details)
-
-    return render_template('assets.html', assets=assets, new_asset=newasset_details, new_asset_address=newasset_addr)
+    return render_template('assets.html', assets=assets, new_asset=asset_details, new_asset_address=newasset_addr)
 
 
 @blueprint.route('/assets/holdings', methods=['GET', 'POST'])
@@ -188,9 +206,12 @@ def show_contracts():
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])
 def create_contract():
     """Create new contract"""
-
     script = request.form['script']
-    res = uplink.create_contract(script)
+    issuer = request.form['issuer']
+
+    location = "./keys/{}.pem".format(issuer)
+    private_key = read_key(location)
+    res = uplink.create_contract(private_key, str(issuer), str(script))
     new_contract_addr = handle_results(res)
 
     contracts = uplink.contracts()
