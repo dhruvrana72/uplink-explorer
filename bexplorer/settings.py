@@ -17,6 +17,7 @@ class ProdConfig(Config):
     ENV = 'prod'
     DEBUG = False
     HOST = '35.187.112.104'
+    SECRET_KEY = 'aaljngtfshafhffgdfg32897tb8c94m3w390sand'
 
 
 class DevConfig(Config):
@@ -25,6 +26,7 @@ class DevConfig(Config):
     ENV = 'dev'
     DEBUG = True
     HOST = '0.0.0.0'
+    SECRET_KEY = 'asndaion(#*IWOJsd9adKAvls0aosind'
 
 
 class TestConfig(Config):

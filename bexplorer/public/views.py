@@ -211,8 +211,13 @@ def create_contract():
 
     location = "./keys/{}.pem".format(issuer)
     private_key = read_key(location)
-    res = uplink.create_contract(private_key, str(issuer), str(script))
-    new_contract_addr = handle_results(res)
+
+    try:
+        res, new_contract_addr = uplink.create_contract(
+            private_key, str(issuer), str(script))
+    except UplinkJsonRpcError as result:
+        new_contract_addr = ""
+        flash(result.response.get('contents').get('errorMsg'), 'error')
 
     contracts = uplink.contracts()
 
