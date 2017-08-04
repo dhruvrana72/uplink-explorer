@@ -14,10 +14,11 @@
                             <th class="mdl-data-table__cell--non-numeric">Signature</th>
                             <th class="mdl-data-table__cell--non-numeric">Transaction Type</th>
                             <th class="mdl-data-table__cell--non-numeric">Action</th>
+                            <th class="mdl-data-table__cell--non-numeric"> </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for tx in transactions %}
+                        {% if transactions %} {% for tx in transactions %}
                         <tr>
 
                             <td class="mdl-data-table__cell--non-numeric">{{tx.timestamp | datetimeformat}}</td>
@@ -48,40 +49,36 @@
                             <td class="mdl-data-table__cell--non-numeric">Account</td>
                             <td class="mdl-data-table__cell--non-numeric">{{tx.header.contents.tag}}</td>
 
-
                             {% endif %}
                             <td>
-                                {% if tx.header.contents.tag is not equalto 'CreateContract' %}
-                                <a href="{{url_for('public.show_tx_details', block_id=block_id, tx_id=tx.signature)}}"> <i class="material-icons">pageview</i></a>{% endif %}
+                                <a href="{{url_for('public.show_tx_details', block_id=block_id, tx_id=tx.signature)}}"> <i class="material-icons">pageview</i></a>
                             </td>
-
                         </tr>
-                        {% else %}
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
-                        </tr>
-                        {% endfor %}
+                        {% else %} {% endfor %}{% else %}
+                        <td>No transactions in block {{block_id}}</td> {% endif %}
                     </tbody>
                 </table>
             </div>
-
             {% if details %}
             <div class="mdl-cell mdl-cell--4-col">
                 <h5>Details</h5>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-                    {% if details.header.tag is equalto 'TxAsset' %}
+                    {% if details.header.contents.tag is equalto 'CreateAsset' %}
                     <thead>
                         <tr>
-                            <th class="mdl-data-table__cell--non-numeric">From</th>
-                            <th class="mdl-data-table__cell--non-numeric">Balance</th>
-                            <th class="mdl-data-table__cell--non-numeric">To</th>
+                            <th class="mdl-data-table__cell--non-numeric">Asset Name</th>
+                            <th class="mdl-data-table__cell--non-numeric">Asset Type</th>
+                            <th class="mdl-data-table__cell--non-numeric">Reference</th>
+                            <th class="mdl-data-table__cell--non-numeric">Supply</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{details.header.contents.contents.fromAddr | shorten}}</td>
-                            <td>{{details.header.contents.contents.balance}}</td>
-                            <td>{{details.header.contents.contents.toAddr | shorten}}</td>
+                            <td>{{details.header.contents.contents.assetName}}</td>
+                            <td>{{details.header.contents.contents.assetType.type}}</td>
+                            <td>{{details.header.contents.contents.reference}}</td>
+                            <td>{{details.header.contents.contents.supply | convert(details.header.contents.contents.assetType.type, details.header.contents.contents.assetType.precision )}}</td>
+
                         </tr>
                     </tbody>
                     {% endif %} {% if details.header.contents.tag is equalto 'Call' %}
@@ -96,19 +93,21 @@
                             <td>{{details.header.contents.contents}}</td>
                         </tr>
                     </tbody>
-                    {% endif %} {% if details.header.tag is equalto 'TxAccount' %}
+                    {% endif %} {% if details.header.contents.tag is equalto 'CreateAccount' %}
                     <thead>
                         <tr>
-                            <th>Account Address</th>
                             <th>Timezone</th>
                             <th>Public Key</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{details.header.contents.contents.origin | shorten}}</td>
                             <td>{{details.header.contents.contents.timezone}}</td>
-                            <td>{{details.header.contents.contents.pubKey | shorten}}</td>
+                            <td id="{{details.header.contents.contents.pubKey |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{details.header.contents.contents.pubKey | shorten_key}}copy')">{{details.header.contents.contents.pubKey | shorten_key}}
+                                <div class="mdl-tooltip" data-mdl-for="{{details.header.contents.contents.pubKey | shorten }}" id="{{details.header.contents.contents.pubKey | shorten_key }}copy">
+                                    {{details.header.contents.contents.pubKey}}
+                                </div>
+                            </td>
 
                         </tr>
                     </tbody>
@@ -122,10 +121,41 @@
                     </thead>
                     <tbody>
                         <tr>
-
+                            {% if details.header.contents.contents.metadata %} {% for key, value in details.header.contents.contents.metadata.iteritems() %}
+                            <td>{{key}} : {{value}}</td>{% endfor %} {% else %}
+                            <td>No associated metadata</td>{% endif %}
                         </tr>
                     </tbody>
-                    {% endif %}
+                    {% endif %}{% if details.header.contents.tag is equalto 'CreateContract' %}
+                    <thead>
+                        <tr>
+                            <th>Contract Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{details.header.contents.contents.address}}</td>
+                        </tr>
+                    </tbody><br/>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <pre contenteditable="false"><code class="view-script">{{details.header.contents.contents.contract}}</code></pre>
+                    </div>
+                    {% endif %} {% if details.header.contents.tag is equalto 'Transfer' %}
+
+                    <thead>
+                        <tr>
+                            <th>Transfer From</th>
+                            <th>Transfer To</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{details.header.contents.contents.assetAddr | shorten}}</td>
+                            <td>{{details.header.contents.contents.toAddr | shorten}}</td>
+                            <td>{{details.header.contents.contents.balance}}</td>
+                        </tr>
+                    </tbody> {% endif %}
                 </table>
             </div>
             {% endif %}

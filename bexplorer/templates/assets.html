@@ -40,7 +40,7 @@
 
                             <td class="mdl-data-table__cell--non-numeric">{{ass.reference}}</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ass.assetType.type}}</td>
-                            <td>{{ass.supply | convert(ass.assetType)}}</td>
+                            <td>{{ass.supply | convert(ass.assetType.type, ass.assetType.precision)}}</td>
                             <td>{{ass.issuedOn | datetimeformat}}</td>
                             <td class="">
                                 <form action="{{ url_for('public.asset_holdings')}}" method="post">
@@ -112,10 +112,6 @@
                                 <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="refer">
                                     An easy way of referencing representation.
                                 </div>
-                                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="none">
-                                    <input type="radio" id="none" class="mdl-radio__button" name="reference" value="" checked>
-                                    <span class="mdl-radio__label">None</span>
-                                </label>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="token">
                                     <input type="radio" id="token" class="mdl-radio__button" name="reference" value="Token">
                                     <span class="mdl-radio__label">Token</span>
@@ -225,7 +221,7 @@
                                 </div>
                             </td>
 
-                            <td class="mdl-data-table__cell--non-numeric">{{val | convert(atype)}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{val | convert(atype.type, atype.precision)}}</td>
                         </tr>
                         {% else %}
                         <tr>

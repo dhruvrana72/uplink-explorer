@@ -16,6 +16,9 @@ from uplink.exceptions import UplinkJsonRpcError
 
 from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
 
+# this number should go somewhere better
+maxNum = 922337203685.4775807
+
 blueprint = Blueprint(
     'public', __name__, static_folder='../static', template_folder='../templates')
 
@@ -144,17 +147,33 @@ def create_asset():
     """Create a new asset"""
 
     name = request.form['name']
-    supply = int(request.form['supply'])
+    supply = request.form['supply']
     asset_type = request.form['asset_type']
     reference = request.form['reference']
     issuer = request.form['issuer']
+    precision = 0
+
+    if supply > maxNum:
+        flash("{number cannot be larger than {}".format(maxNum), 'error')
+
+    if(str(asset_type) == "Fractional"):
+        whole, fractional = map(int, str(supply).split("."))
+        precision = len(str(fractional))
+        supply = int(str(whole) + str(fractional))
+
+    if precision > 7:
+        flash("number cannot be smaller than 0.0000001", 'error')
 
     from_address = issuer
     location = "./keys/{}.pem".format(issuer)
     private_key = read_key(location)
 
-    result, newasset_addr = uplink.create_asset(
-        private_key, from_address, name, supply, asset_type, reference, issuer, precision=0)
+    try:
+        result, newasset_addr = uplink.create_asset(
+            private_key, from_address, name, supply, asset_type, reference, issuer, precision)
+    except UplinkJsonRpcError as result:
+        new_contract_addr = ""
+        flash(result.response.get('contents').get('errorMsg'), 'error')
 
     count = 0
     while True:
@@ -198,7 +217,7 @@ def show_contracts():
     """Present a table of contracts"""
     contracts = uplink.contracts()
 
-    script = "global int x = 0; \nlocal int y = 0; \nasset z = '32Gp2CcFx9dagEyZA6UvY7WFiwCp3b8tbTufDYDxdxHj'; \n \nsetX () { \n  x = 42; \n} \n \ngetX () { \n  return x; \n}"
+    script = "global int x = 0; \n\ntransition initial -> Confirmation; \ntransition Confirmation -> Settle; \ntransition Settle -> terminal;  \n  \n@getX  \ngetX () {\n  return x;  \n} \n\n@setX  \nsetX () {  \n  x = 42; \ntransitionTo(:set);  \nreturn void; \n}"
 
     return render_template('contracts.html', contracts=contracts, script=script)
 
@@ -208,16 +227,21 @@ def create_contract():
     """Create new contract"""
     script = request.form['script']
     issuer = request.form['issuer']
-
-    location = "./keys/{}.pem".format(issuer)
-    private_key = read_key(location)
+    new_contract_addr = ""
 
     try:
-        res, new_contract_addr = uplink.create_contract(
-            private_key, str(issuer), str(script))
-    except UplinkJsonRpcError as result:
-        new_contract_addr = ""
-        flash(result.response.get('contents').get('errorMsg'), 'error')
+        location = "./keys/{}.pem".format(issuer)
+        private_key = read_key(location)
+
+        try:
+            res, new_contract_addr = uplink.create_contract(
+                private_key, str(issuer), str(script))
+        except UplinkJsonRpcError as result:
+
+            flash(result.response.get('contents').get('errorMsg'), 'error')
+
+    except IOError:
+        flash("Invalid issuer address, no key found. Please try again", "error")
 
     contracts = uplink.contracts()
 

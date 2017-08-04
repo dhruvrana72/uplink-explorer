@@ -3,11 +3,12 @@ from qrcode.image.pure import PymagingImage
 import base64
 
 
-def formatPrec(n, prec):
+def formatPrec(prec, n):
     """
     Format a value n in terms of an arbitrary precision specifcation value
     """
-    return '{0:.{1}f}'.format(prec, n)
+    prec = int(prec)
+    return '{}'.format(n * 10 ** (-prec))
 
 
 def printer(val, hlight):
@@ -33,8 +34,3 @@ def save_key(sk, name):
     with open(filename, "wb") as file:
         file.write(sk)
     return 'name'
-
-
-def read_key(filename):
-    with open(filename, "rb"):
-        return file.read()

@@ -60,22 +60,21 @@ def peers(context, p):
 
 @jinja2.contextfilter
 @blueprint.app_template_filter()
-def convert(context, value, atype):
+def convert(context, value, atype, prec=0):
     """
         convert asset type fractional to fixed precision
         FPREC is 10^(-7) or 0.0000001
     """
     if value:
-        if atype.type == 'Discrete':
+        if atype == 'Discrete':
             return value
 
-        if atype.type == 'Fractional':
+        if atype == 'Fractional':
 
-            prec = atype.precision or 0
             result = formatPrec(prec, value)
             return result
 
-        if atype.type == 'Binary':
+        if atype == 'Binary':
             if value <= 0:
                 return 'not held'
             else:
