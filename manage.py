@@ -39,7 +39,7 @@ def _make_context():
 
 class Server(Command):
 
-    def __init__(self, host='127.0.0.1', port=8000, debug=False):
+    def __init__(self, host='127.0.0.1', port=5000, debug=False):
         self.host = host
         self.port = port
         self.debug = debug
