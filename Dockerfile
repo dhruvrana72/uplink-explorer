@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "manage.py", "runserver", "-n", "0.0.0.0", "--debug=True"] 
+CMD ["python", "manage.py", "runserver", "-n", "0.0.0.0"] 
