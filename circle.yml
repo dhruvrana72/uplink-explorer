@@ -1,13 +1,88 @@
-machine:
-  python:
-    version: 2.7.11
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: uplink-explorer-{{ .Branch }}
+          paths:
+            - uplink.tar
+      - run:
+          name: Load docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i uplink-explorer.tar | true
+      - run:
+          name: Build docker image
+          command: |
+            docker build --cache-from=uplink-explorer -t uplink-explorer . 
+            docker save uplink-explorer -o uplink-explorer.tar
+      - run: 
+          name: Run unit tests
+          command: docker run -it uplink-explorer python manage.py test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - uplink-explorer.tar
+      - save_cache:
+          key: uplink-explorer-{{ .Branch }}
+          paths:
+            - uplink-explorer.tar
 
-dependencies:
-  cache_directories:
-  pre:
-  override:
-    - pip install --upgrade -r requirements.txt
+  deploy:
+    docker:
+      - image: google/cloud-sdk:alpine
+    environment:
+      PROJECT_NAME: uplink-test-cluster-174313
+      CLUSTER_NAME: test-cluster
+      CLOUDSDK_COMPUTE_ZONE: europe-west1-d
+      DEBIAN_FRONTEND: noninteractive
+      GOOGLE_APPLICATION_CREDENTIALS: account-auth.json
+    steps:
+      - attach_workspace:
+          at: .
+      - setup_remote_docker
+      - run:
+          name: Extract gcloud credentials and activate service account
+          command: |
+            echo $ACCT_AUTH | base64 -d > account-auth.json
+            gcloud auth activate-service-account --key-file account-auth.json
+      - run:
+          name: Install additional google cloud dependencies
+          command: |
+            gcloud --quiet components update
+            gcloud --quiet components update kubectl
+            apk add --update docker
+      - run:
+          name: Set project, cluster, zone and get cluster credentials
+          command: |
+             gcloud config set project $PROJECT_NAME
+             gcloud --quiet config set container/cluster $CLUSTER_NAME
+             gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+             gcloud --quiet container clusters get-credentials $CLUSTER_NAME
+      - run: gcloud docker -- load -i uplink-explorer.tar
+      - run:
+          name: Push Docker image
+          command: |
+            gcloud docker -- tag uplink-explorer us.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1
+            gcloud docker -- tag us.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1 us.gcr.io/${PROJECT_NAME}/uplink-explorer:latest
+            gcloud docker -- push us.gcr.io/${PROJECT_NAME}/uplink-explorer
+      - deploy: 
+          name: Deploy to testnet
+          command: kubectl set image deploy/uplink-explorer  uplink-explorer=us.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1
 
-test:
-  override:
-    - python manage.py test
+workflows:
+  version: 2
+  build-and-deploy-test-cluster:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+

@@ -1,34 +1,19 @@
-FROM ubuntu
+FROM python:2.7-alpine
 
-WORKDIR /bexplorer
-USER root
+WORKDIR /usr/src/app
+RUN apk add --update git openssh gcc musl-dev libffi-dev openssl-dev
 
-RUN apt-get update && apt-get -y -q install \
-python-pip \
-python-dev build-essential \
-python-software-properties \
-software-properties-common \
-libssl-dev \
-libffi-dev \
-openssl \ 
-git
 
-# Assure github is a recognized ssh hostname
-RUN mkdir -p /root/.ssh
-RUN ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts
+# since image we push to the registry is squashed, our keys stay secret
+RUN mkdir -p ~/.ssh
 
-# Copy a local ssh public key to the docker image
-COPY id_rsa /root/.ssh/id_rsa
-RUN chmod 700 /root/.ssh/id_rsa
+RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+RUN ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-# Python requirements
-ADD ./requirements.txt /bexplorer/requirements.txt
-RUN pip install -r requirements.txt 
-ADD . /bexplorer
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Remove the public ssh key from the docker image
-RUN rm /root/.ssh/id_rsa
 
-EXPOSE 5000
-EXPOSE 8545
-CMD ["./runner-gcloud"] 
+COPY . .
+
+CMD ["python", "manage.py", "runserver", "-p", "5000", "-n", "0.0.0.0", "--debug=True"] 

@@ -16,7 +16,7 @@ class ProdConfig(Config):
 
     ENV = 'prod'
     DEBUG = False
-    HOST = '35.187.112.104'
+    HOST = 'bootnode'
     SECRET_KEY = 'aaljngtfshafhffgdfg32897tb8c94m3w390sand'
 
 
