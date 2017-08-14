@@ -67,12 +67,12 @@ jobs:
       - run:
           name: Push Docker image
           command: |
-            gcloud docker -- tag uplink-explorer us.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1
-            gcloud docker -- tag us.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1 us.gcr.io/${PROJECT_NAME}/uplink-explorer:latest
-            gcloud docker -- push us.gcr.io/${PROJECT_NAME}/uplink-explorer
+            gcloud docker -- tag uplink-explorer eu.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1
+            gcloud docker -- tag eu.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1 eu.gcr.io/${PROJECT_NAME}/uplink-explorer:latest
+            gcloud docker -- push eu.gcr.io/${PROJECT_NAME}/uplink-explorer
       - deploy: 
           name: Deploy to testnet
-          command: kubectl set image deploy/uplink-explorer  uplink-explorer=us.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1
+          command: kubectl set image deploy/uplink-explorer  uplink-explorer=eu.gcr.io/${PROJECT_NAME}/uplink-explorer:$CIRCLE_SHA1
 
 workflows:
   version: 2
