@@ -1,8 +1,7 @@
 """
 Pages serving HTML content that interact with Flask
 """
-from gevent.monkey import patch_all
-patch_all()
+
 import gevent
 import time
 import os
@@ -92,12 +91,12 @@ def create_account():
         timezone="GMT"
     )
 
-    public_key_hex = codecs.encode(pubkey.to_string(), 'hex')
-    new_acct_pubkey_qr = make_qrcode(
-        public_key_hex, "new_acct_pubKey")
+    # public_key_hex = codecs.encode(pubkey.to_string(), 'hex')
+    # new_acct_pubkey_qr = make_qrcode(
+    #     public_key_hex, "new_acct_pubKey")
 
-    acct_addr = derive_account_address(pubkey)
-    new_acct_addr_qr = make_qrcode(acct_addr, "new_acct_address")
+    # acct_addr = derive_account_address(pubkey)
+    # new_acct_addr_qr = make_qrcode(acct_addr, "new_acct_address")
 
     # save pem of private key by short address account address as name
     privkey_pem = skey.to_pem()
@@ -120,7 +119,7 @@ def create_account():
         break
 
     accounts = uplink.accounts()
-    return render_template('accounts.html', accounts=accounts, newaccount=acct_detail, new_acct_pubkey_qr=new_acct_pubkey_qr, new_acct_addr_qr=new_acct_addr_qr)
+    return render_template('accounts.html', accounts=accounts, newaccount=acct_detail, new_acct_pubkey_qr=None, new_acct_addr_qr=None)
 
 
 @blueprint.route('/accounts/address', methods=['GET', 'POST'])

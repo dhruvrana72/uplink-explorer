@@ -1,5 +1,6 @@
 
-
+from gevent.monkey import patch_all
+patch_all()
 import os
 import sys
 import optparse
@@ -7,6 +8,7 @@ from bexplorer.bexplorer import *
 from flask_script import Command, Manager, Option, Shell
 from bexplorer.settings import DevConfig, ProdConfig, TestConfig
 from gevent.wsgi import WSGIServer
+from werkzeug.contrib.profiler import ProfilerMiddleware
 
 KEYPATH = None
 CERTPATH = None
@@ -55,6 +57,7 @@ class Server(Command):
     def run(self, host, port, debug):
         print("debug mode:" + str(debug))
         if debug == "True":
+            app.wsgi_app = ProfilerMiddleware(app.wsgi_app)
             app.run(
                 debug=debug,
                 host=host,
