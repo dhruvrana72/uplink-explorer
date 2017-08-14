@@ -3,6 +3,7 @@ Pages serving HTML content that interact with Flask
 """
 from gevent.monkey import patch_all
 patch_all()
+import gevent
 import time
 import os
 import json
@@ -106,7 +107,8 @@ def create_account():
     count = 0
     while True:
         count += 1
-        time.sleep(1)
+        gevent.sleep(0.2)
+
         print(count)
         if(count > 60):
             flash("failed to create account", 'error')
@@ -188,8 +190,7 @@ def create_asset():
     count = 0
     while True:
         count += 1
-        time.sleep(1)
-        print(count)
+        gevent.sleep(0.2)
         if(count > 60):
             flash("failed to create account", 'error')
         try:
