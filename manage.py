@@ -6,6 +6,7 @@ import optparse
 from bexplorer.bexplorer import *
 from flask_script import Command, Manager, Option, Shell
 from bexplorer.settings import DevConfig, ProdConfig, TestConfig
+from gevent.wsgi import WSGIServer
 
 KEYPATH = None
 CERTPATH = None
@@ -49,14 +50,20 @@ class Server(Command):
             Option('-n', '--host', dest='host', default=self.host),
             Option('-p', '--port', dest='port', default=self.port),
             Option('-d', '--debug', dest='debug', default=self.debug),
-        ) 
+        )
 
     def run(self, host, port, debug):
-        app.run(
-            debug=debug,
-            host=host,
-            port=port
-        )
+        print("debug mode:" + str(debug))
+        if debug == "True":
+            app.run(
+                debug=debug,
+                host=host,
+                port=port,
+                threaded=True
+            )
+        else:
+            server = WSGIServer((host, port), app)
+            server.serve_forever()
 
 
 class Test(Command):

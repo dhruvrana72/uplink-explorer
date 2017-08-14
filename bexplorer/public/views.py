@@ -1,12 +1,16 @@
 """
 Pages serving HTML content that interact with Flask
 """
+from gevent.monkey import patch_all
+patch_all()
 import time
 import os
 import json
 import random
 import base64
 import codecs
+
+
 from flask import Flask, Blueprint, redirect, render_template, request, url_for, current_app, jsonify, flash
 
 from bexplorer.extensions import uplink
@@ -153,10 +157,16 @@ def create_asset():
     issuer = request.form['issuer']
     precision = 0
 
-    if supply > maxNum:
-        flash("{number cannot be larger than {}".format(maxNum), 'error')
+    if(str(asset_type) == "Discrete"):
+        if int(supply) > maxNum:
+            flash("{} given number cannot be larger than {}".format(
+                supply, maxNum), 'error')
 
     if(str(asset_type) == "Fractional"):
+        if supply > maxNum:
+            flash("{} given number cannot be larger than {}".format(
+                supply, maxNum), 'error')
+
         whole, fractional = map(int, str(supply).split("."))
         precision = len(str(fractional))
         supply = int(str(whole) + str(fractional))
