@@ -58,11 +58,11 @@ class Server(Command):
             app.run(
                 debug=debug,
                 host=host,
-                port=port,
+                port=int(port),
                 threaded=True
             )
         else:
-            server = WSGIServer((host, port), app)
+            server = WSGIServer((host, int(port)), app)
             server.serve_forever()
 
 
