@@ -42,7 +42,7 @@ class Server(Command):
 
     def __init__(self, host='127.0.0.1', port=5000, debug=False):
         self.host = host
-        self.port = port
+        self.port = int(port)
         self.debug = debug
 
     def get_options(self):
