@@ -18,6 +18,27 @@ maxNum = 922337203685.4775807
 blueprint = Blueprint(
     'public', __name__, static_folder='../static', template_folder='../templates')
 
+example_script = """
+global int x = 0 ;
+
+transition initial -> get;
+transition get -> terminal;
+
+@get
+getX () {
+  terminate("Now I die.");
+  return x;
+}
+
+@initial
+setX () {
+  x = 42;
+  transitionTo(:get);
+  return void;
+}
+"""
+
+
 @blueprint.context_processor
 def inject_version():
     return dict(version=uplink.version())
@@ -214,15 +235,12 @@ def asset_holdings():
 
     return render_template('assets.html', assets=assets, holdings=holdings, atype=atype)
 
-
 @blueprint.route('/contracts', methods=['GET', 'POST'])
 def show_contracts():
     """Present a table of contracts"""
     contracts = uplink.contracts()
-
-    script = "global int x = 0; \n\ntransition initial -> Confirmation; \ntransition Confirmation -> Settle; \ntransition Settle -> terminal;  \n  \n@getX  \ngetX () {\n  return x;  \n} \n\n@setX  \nsetX () {  \n  x = 42; \ntransitionTo(:set);  \nreturn void; \n}"
-
-    return render_template('contracts.html', contracts=contracts, script=script)
+    return render_template('contracts.html', contracts=contracts,
+            script=example_script)
 
 
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])
