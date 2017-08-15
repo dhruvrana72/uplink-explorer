@@ -27,7 +27,7 @@
                 <a class="mdl-navigation__link" href="http://adjoint.io">Adjoint</a>
                 <a class="mdl-navigation__link" href="http://adjoint.io/uplink">About Uplink</a>
                 <a class="mdl-navigation__link" href="http://adjoint-io/uplink/docs">Documentation</a>
-                <a class="mdl-navigation__link" href="https;//github.com/adjoint-io">Github</a>
+                <a class="mdl-navigation__link" href="https://github.com/adjoint-io">Github</a>
             </nav>
         </div>
     </header>
@@ -39,6 +39,22 @@
             <a class="mdl-navigation__link" href="/assets">Assets</a>
             <a class="mdl-navigation__link" href="/contracts">Contracts</a>
             <a class="mdl-navigation__link" href="/transactions/pending">Pending Transactions</a>
+        </nav>
+
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation mdl-layout--large-screen-only">
+          <p class="mdl-navigation__link">
+            commit: {{ version.commit }} 
+          </p>
+          <p class="mdl-navigation__link">
+            dirty: {{version.dirty }}
+          </p>
+          <p class="mdl-navigation__link">
+            version: {{ version.version }}
+          </p>
+          <p class="mdl-navigation__link">
+            branch: {{version.branch}}
+          </p> 
 
         </nav>
     </div>

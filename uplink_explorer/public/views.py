@@ -18,6 +18,9 @@ maxNum = 922337203685.4775807
 blueprint = Blueprint(
     'public', __name__, static_folder='../static', template_folder='../templates')
 
+@blueprint.context_processor
+def inject_version():
+    return dict(version=uplink.version())
 
 def handle_results(res):
     """Handles successful or failed results of new contract interactions"""
