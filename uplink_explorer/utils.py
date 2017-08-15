@@ -1,8 +1,3 @@
-import qrcode
-from qrcode.image.pure import PymagingImage
-import base64
-
-
 def formatPrec(prec, n):
     """
     Format a value n in terms of an arbitrary precision specifcation value
@@ -19,14 +14,14 @@ def printer(val, hlight):
     """
 
     highlight = "========= {} =========".format(hlight)
-    print highlight
-    print val
-    print highlight
+    print(highlight)
+    print(val)
+    print(highlight)
 
 if __name__ == '__main__':
-    print formatPrec(4, 3.1415926535)
-    print formatPrec(9, 2.7182818284)
-    print formatPrec(0, 100.3)
+    print(formatPrec(4, 3.1415926535))
+    print(formatPrec(9, 2.7182818284))
+    print(formatPrec(0, 100.3))
 
 
 def save_key(sk, name):

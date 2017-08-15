@@ -2,23 +2,15 @@
 Pages serving HTML content that interact with Flask
 """
 
-import gevent
-import time
-import os
 import json
-import random
-import base64
-import codecs
 
-
-from flask import Flask, Blueprint, redirect, render_template, request, url_for, current_app, jsonify, flash
-
-from bexplorer.extensions import uplink
-from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address, \
-    read_key, save_key
+import gevent
+from flask import Blueprint, render_template, request, jsonify, flash
+from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
+from uplink.cryptography import read_key, save_key
 from uplink.exceptions import UplinkJsonRpcError
 
-from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
+from uplink_explorer.extensions import uplink
 
 # this number should go somewhere better
 maxNum = 922337203685.4775807
@@ -63,7 +55,7 @@ def show_tx_details(block_id, tx_id):
 
     transactions = uplink.transactions(block_id)
 
-    details = filter(lambda tx: tx.signature == tx_id, transactions)[0]
+    details = list(filter(lambda tx: tx.signature == tx_id, transactions))[0]
 
     return render_template('transactions.html', transactions=transactions, block_id=block_id,
                            details=details)
@@ -95,12 +87,11 @@ def create_account():
     # new_acct_pubkey_qr = make_qrcode(
     #     public_key_hex, "new_acct_pubKey")
 
-    # acct_addr = derive_account_address(pubkey)
     # new_acct_addr_qr = make_qrcode(acct_addr, "new_acct_address")
 
     # save pem of private key by short address account address as name
     privkey_pem = skey.to_pem()
-    location = "./keys/{}".format(acct_addr)
+    location = "./keys/{}".format(acct.address)
     save_key(privkey_pem, location)
 
     count = 0
@@ -108,11 +99,10 @@ def create_account():
         count += 1
         gevent.sleep(0.2)
 
-        print(count)
         if(count > 60):
             flash("failed to create account", 'error')
         try:
-            acct_detail = uplink.getaccount(acct_addr)
+            acct_detail = uplink.getaccount(acct.address)
             print("new account successfully created " + acct_detail.address)
         except UplinkJsonRpcError:
             continue

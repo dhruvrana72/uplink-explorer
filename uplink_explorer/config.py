@@ -14,23 +14,26 @@ class Config(object):
 class ProdConfig(Config):
     """Production configuration."""
 
-    ENV = 'prod'
     DEBUG = False
-    HOST = 'bootnode'
+    RPC_HOST = 'bootnode'
     SECRET_KEY = 'aaljngtfshafhffgdfg32897tb8c94m3w390sand'
 
 
 class DevConfig(Config):
     """Development configuration."""
 
-    ENV = 'dev'
     DEBUG = True
-    HOST = '0.0.0.0'
+    RPC_HOST = '0.0.0.0'
     SECRET_KEY = 'asndaion(#*IWOJsd9adKAvls0aosind'
 
 
-class TestConfig(Config):
-    """Test configuration."""
+_config = {
+    "DEV": "uplink_explorer.config.DevConfig",
+    "PROD": "uplink_explorer.config.ProdConfig",
+}
 
-    TESTING = True
-    DEBUG = True
+
+config_path = _config.get(os.environ.get('ENV', "PROD"), _config['PROD'])
+
+config = DevConfig if os.environ.get('ENV') == 'DEV' else ProdConfig
+

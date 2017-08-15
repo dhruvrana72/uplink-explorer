@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "manage.py", "runserver", "-n", "0.0.0.0", "-p", "80"] 
+CMD ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent

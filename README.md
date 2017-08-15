@@ -11,8 +11,30 @@ Block Explorer
 Installation
 ------------
 
+```
+  git clone git@github.com:adjoint-io/uplink-explorer.git && cd uplink explorer
+  virtualenv -p /usr/bin/python2.7 venv
+  source venv/bin/activate 
+  pip install -r requirements.txt
+```
+
 Usage
 -----
+
+Local Development ( with reloader )
+
+```
+ENV=DEV python app.py
+```
+
+
+Testing
+-------
+To run the test suite:
+
+```
+  pytest -s -vv tests/
+```
 
 License
 -------

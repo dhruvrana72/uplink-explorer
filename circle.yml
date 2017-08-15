@@ -22,7 +22,7 @@ jobs:
             docker save uplink-explorer -o uplink-explorer.tar
       - run: 
           name: Run unit tests
-          command: docker run -it uplink-explorer python manage.py test
+          command: docker run -it uplink-explorer pytest -s -vv tests
       - persist_to_workspace:
           root: .
           paths:

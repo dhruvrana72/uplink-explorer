@@ -1,2 +1,2 @@
-graft bexplorer/templates
-graft bexplorer/static
+graft uplink_explorer/templates
+graft uplink_explorer/static

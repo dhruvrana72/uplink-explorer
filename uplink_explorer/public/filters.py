@@ -5,8 +5,8 @@ import time
 import json
 import jinja2
 import flask
-from bexplorer.extensions import uplink
-from bexplorer.utils import formatPrec
+from uplink_explorer.extensions import uplink
+from uplink_explorer.utils import formatPrec
 
 blueprint = flask.Blueprint('filters', __name__)
 

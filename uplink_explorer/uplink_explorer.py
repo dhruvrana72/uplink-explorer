@@ -2,13 +2,11 @@
 """Streamer"""
 
 from flask import Flask
-from settings import ProdConfig
-from extensions import uplink
-from public import filters, views
-from uplink.session import UplinkSession
+from .extensions import uplink
+from .public import filters, views
 
 
-def create_app(config_object=ProdConfig):
+def create_app(config_object):
     """An application factory, as explained here: 
     http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
