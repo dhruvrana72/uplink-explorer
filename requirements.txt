@@ -22,4 +22,5 @@ git+git://github.com/ojii/pymaging-png.git#egg=pymaging-png
 
 
 
+raven[flask]
 gunicorn
