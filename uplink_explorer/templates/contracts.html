@@ -2,6 +2,8 @@
 <main class="mdl-layout__content">
     <div class="page-content">
         <br>
+
+        {% if not config.READONLY_MODE %}
         <div class="mdl-cell mdl-cell--7-col" style="position:fixed;">
             <div class="demo-card-square mdl-card mdl-shadow--2dp">
                 <div class="mdl-card__title">
@@ -34,6 +36,8 @@
 
             </div>
         </div>
+
+        {% endif %}
         {% if contracts is not none %} {% for con in contracts %}
         <div class="mdl-cell mdl-cell--5-col mdl-cell--7-offset">
 

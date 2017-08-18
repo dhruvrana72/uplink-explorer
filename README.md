@@ -24,7 +24,7 @@ Usage
 Local Development ( with reloader )
 
 ```
-ENV=DEV python app.py
+ENV=DEV READONLY=FALSE python app.py
 ```
 
 

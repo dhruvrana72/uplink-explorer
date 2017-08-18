@@ -67,6 +67,8 @@
 
 
             </div>
+
+            {% if not config.READONLY_MODE %}
             <div class="mdl-cell mdl-cell--5-col">
                 <!--New Asset-->
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
@@ -234,6 +236,8 @@
                     {% endif %}
                 </table>
             </div>
+
+            {% endif %}
         </div>
 
     </div>

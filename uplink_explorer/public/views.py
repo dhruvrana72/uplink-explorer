@@ -9,11 +9,27 @@ from flask import Blueprint, render_template, request, jsonify, flash
 from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
 from uplink.cryptography import read_key, save_key
 from uplink.exceptions import UplinkJsonRpcError
+from uplink_explorer.config import config
+from functools import wraps
+from flask import redirect, url_for, flash
+
 
 from uplink_explorer.extensions import uplink
 
 # this number should go somewhere better
 maxNum = 922337203685.4775807
+
+
+def readonly_mode_check(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if config.READONLY_MODE:
+            flash("Uplink explorer is running in readonly mode")
+            return redirect(url_for('public.show_index'))
+        return func(*args, **kwargs)
+
+    return decorated_function
+
 
 blueprint = Blueprint(
     'public', __name__, static_folder='../static', template_folder='../templates')
@@ -38,10 +54,15 @@ setX () {
 }
 """
 
-
 @blueprint.context_processor
 def inject_version():
     return dict(version=uplink.version())
+
+
+@blueprint.context_processor
+def inject_config():
+    return dict(config=config)
+
 
 def handle_results(res):
     """Handles successful or failed results of new contract interactions"""
@@ -93,6 +114,7 @@ def show_accounts():
 
 
 @blueprint.route('/accounts/create', methods=['GET', 'POST'])
+@readonly_mode_check
 def create_account():
     """Create an Account"""
 
@@ -162,6 +184,7 @@ def show_assets():
 
 
 @blueprint.route('/assets/create', methods=['GET', 'POST'])
+@readonly_mode_check
 def create_asset():
     """Create a new asset"""
 
@@ -244,6 +267,7 @@ def show_contracts():
 
 
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])
+@readonly_mode_check
 def create_contract():
     """Create new contract"""
     script = request.form['script']
