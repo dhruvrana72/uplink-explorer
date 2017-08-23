@@ -82,7 +82,7 @@ def inject_config():
 def handle_rpc_connection_fail(error):
     if config == ProdConfig:
         from uplink_explorer.extensions import sentry
-        sentry.captureException(error)
+        sentry.captureException()
 
     return render_template("rpc_connection_failed.html")
 
@@ -91,7 +91,7 @@ def handle_rpc_connection_fail(error):
 def handle_rpc_error(error):
     if config == ProdConfig:
         from uplink_explorer.extensions import sentry
-        sentry.captureException(error)
+        sentry.captureException()
 
     return render_template("rpc_error.html", error=error)
 
