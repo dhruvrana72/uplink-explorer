@@ -7,68 +7,72 @@
             <div class="mdl-cell mdl-cell--7-col">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
-                        <tr>
-                            <th class="mdl-data-table__cell--non-numeric">Address</th>
-                            <th class="mdl-data-table__cell--non-numeric">Name</th>
-                            <th class="mdl-data-table__cell--non-numeric">Issuer</th>
-                            <th class="mdl-data-table__cell--non-numeric">Reference</th>
-                            <th class="mdl-data-table__cell--non-numeric">Asset Type</th>
-                            <th>Total Supply</th>
-                            <th>Issued On</th>
-                            <th class="mdl-data-table__cell--non-numeric">Holdings</th>
-                        </tr>
+                    <tr>
+                        <th class="mdl-data-table__cell--non-numeric">Address</th>
+                        <th class="mdl-data-table__cell--non-numeric">Name</th>
+                        <th class="mdl-data-table__cell--non-numeric">Issuer</th>
+                        <th class="mdl-data-table__cell--non-numeric">Reference</th>
+                        <th class="mdl-data-table__cell--non-numeric">Asset Type</th>
+                        <th>Total Supply</th>
+                        <th>Issued On</th>
+                        <th class="mdl-data-table__cell--non-numeric">Holdings</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% if assets is not none %} {% for ass in assets %}
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric">
+                    {% if assets is not none %} {% for ass in assets %}
+
+                    <tr {% if ass.address== asset.address %} class="is-selected" {% endif %}>
+                        <td class="mdl-data-table__cell--non-numeric">
                                 <span class="mdl-chip" id="{{ass.address | shorten}}">
                                 <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
                                   fingerprint
                                 </span>
                                 <span class="mdl-chip__text" onclick="copyToClipboard('{{ass.address | shorten}}copy')">{{ass.address | shorten}}</span>
                                 </span>
-                                <div id="{{ass.address | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{ass.address | shorten}}">
-                                    {{ass.address}}
-                                </div>
-                            </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ass.name}}</td>
-                            <td ID="{{ass.issuer | shorten}}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{ass.issuer | shorten}}copy')">
-                                {{ass.issuer | shorten}}
-                                <div id="{{ass.issuer | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{ass.issuer | shorten}}">{{ass.issuer}}</div>
-                            </td>
+                            <div id="{{ass.address | shorten}}copy" class="mdl-tooltip"
+                                 data-mdl-for="{{ass.address | shorten}}">
+                                {{ass.address}}
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ass.name}}</td>
+                        <td ID="{{ass.issuer | shorten}}" class="mdl-data-table__cell--non-numeric"
+                            onclick="copyToClipboard('{{ass.issuer | shorten}}copy')">
+                            {{ass.issuer | shorten}}
+                            <div id="{{ass.issuer | shorten}}copy" class="mdl-tooltip"
+                                 data-mdl-for="{{ass.issuer | shorten}}">{{ass.issuer}}
+                            </div>
+                        </td>
 
-                            <td class="mdl-data-table__cell--non-numeric">{{ass.reference}}</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ass.assetType.type}}</td>
-                            <td>{{ass.supply | convert(ass.assetType.type, ass.assetType.precision)}}</td>
-                            <td>{{ass.issuedOn | datetimeformat}}</td>
-                            <td class="">
-                                <form action="{{ url_for('public.asset_holdings')}}" method="post">
-                                    <input class="hide" name="atype" value="{{ass.assetType.type}}" readonly/> {% if ass.assetType.precision %}
-                                    <input class="hide" name="prec" value="{{ass.assetType.precision}}" readonly/> {% else%}
-                                    <input class="hide" name="prec" value="False" readonly/> {% endif%}
-                                    <button type="submit" name="submit" value="{{ass.holdings}}" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-                                      <i class="material-icons">view_list</i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
-                        </tr>
-                        {% endfor %} {% else %}
-                        <tr>
-                            <td>No Assets Created Yet</td>
-                        </tr>
-                        {% endif %}
+                        <td class="mdl-data-table__cell--non-numeric">{{ass.reference}}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ass.assetType.type}}</td>
+                        <td>{{ass.supply | convert(ass.assetType.type, ass.assetType.precision)}}</td>
+                        <td>{{ass.issuedOn | datetimeformat}}</td>
+
+                        <td>
+                            <a href="{{ url_for('public.assets', addr = ass.address) }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                                    <i class="material-icons">view_list</i>
+                                </button>
+                            </a>
+
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
+                    </tr>
+                    {% endfor %} {% else %}
+                    <tr>
+                        <td>No Assets Created Yet</td>
+                    </tr>
+                    {% endif %}
                     </tbody>
                 </table>
 
 
             </div>
 
-            {% if not config.READONLY_MODE %}
+            {% if not config.READONLY_MODE and not asset %}
             <div class="mdl-cell mdl-cell--5-col">
                 <!--New Asset-->
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
@@ -86,26 +90,32 @@
                                 <label class="mdl-textfield__label" for="name">Name</label>
                             </div>
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="supply" required name="supply">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                                       id="supply" required name="supply">
                                 <label class="mdl-textfield__label" for="supply">Supply</label>
                                 <span class="mdl-textfield__error">Input is not a number</span>
                             </div>
                             <br>
                             <div>
                                 <h6 id="aType">Asset Type</h6>
-                                <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="aType" style="text-align:left !important">
-                                    Fractional - fixed point precision - e.g. 1.2345671 - (precision is 10^-7) <br> Discrete - integer - e.g. 3 <br> Binary - held or not-held. held if greater than 0
+                                <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="aType"
+                                     style="text-align:left !important">
+                                    Fractional - fixed point precision - e.g. 1.2345671 - (precision is 10^-7) <br>
+                                    Discrete - integer - e.g. 3 <br> Binary - held or not-held. held if greater than 0
                                 </div>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="discrete">
-                                    <input type="radio" id="discrete" class="mdl-radio__button" name="asset_type" value="Discrete" checked>
+                                    <input type="radio" id="discrete" class="mdl-radio__button" name="asset_type"
+                                           value="Discrete" checked>
                                     <span class="mdl-radio__label">Discrete</span>
                                 </label>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="fractional">
-                                    <input type="radio" id="fractional" class="mdl-radio__button" name="asset_type" value="Fractional">
+                                    <input type="radio" id="fractional" class="mdl-radio__button" name="asset_type"
+                                           value="Fractional">
                                     <span class="mdl-radio__label">Fractional</span>
                                 </label>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="binary">
-                                    <input type="radio" id="binary" class="mdl-radio__button" name="asset_type" value="Binary">
+                                    <input type="radio" id="binary" class="mdl-radio__button" name="asset_type"
+                                           value="Binary">
                                     <span class="mdl-radio__label">Binary</span>
                                 </label>
                             </div>
@@ -115,11 +125,13 @@
                                     An easy way of referencing representation.
                                 </div>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="token">
-                                    <input type="radio" id="token" class="mdl-radio__button" name="reference" value="Token">
+                                    <input type="radio" id="token" class="mdl-radio__button" name="reference"
+                                           value="Token">
                                     <span class="mdl-radio__label">Token</span>
                                 </label>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="security">
-                                    <input type="radio" id="security" class="mdl-radio__button" name="reference" value="Security">
+                                    <input type="radio" id="security" class="mdl-radio__button" name="reference"
+                                           value="Security">
                                     <span class="mdl-radio__label">Security</span>
                                 </label>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="usd">
@@ -143,117 +155,116 @@
                         </div>
 
                         <div class="mdl-card__actions mdl-card--border">
-                            <button type="submit" name="submit" value="create_asset" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                            <button type="submit" name="submit" value="create_asset"
+                                    class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                                 Create
                             </button>
                         </div>
                     </form>
                 </div>
+            </div>
+            {% endif %}
+            <div class="mdl-cell mdl-cell--5-col">
 
-                {% if new_asset %}
-                <br><br>
+                {% if asset %}
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
                     <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">New Asset Details</h2>
+                        <h2 class="mdl-card__title-text">Asset Details</h2>
                     </div>
 
                     <ul class="demo-list-icon mdl-list">
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">fingerprint</i>
-                                Asset Address: {{new_asset_address}}
+                                Asset Address: {{asset.address}}
                             </span>
                         </li>
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">person</i>
-                                Asset Name: {{new_asset.name}}
+                                Asset Name: {{asset.name}}
                             </span>
                         </li>
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">label_outline</i>
-                                Reference: {{new_asset.reference}} 
+                                Reference: {{asset.reference}}
                         </span>
                         </li>
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">account_balance</i>
-                                 Issuer: {{new_asset.issuer}}
+                                 Issuer: {{asset.issuer}}
                             </span>
                         </li>
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">equalizer</i>
-                                 Supply: {{new_asset.supply}}
+                                 Supply: {{asset.supply}}
                             </span>
                         </li>
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">local_offer</i>
-                                 Asset Type: {{new_asset.assetType.type}}
+                                 Asset Type: {{asset.assetType.type}}
                             </span>
                         </li>
-                        {% if new_asset.assetType.precision %}
+                        {% if asset.assetType.precision %}
                         <li class="mdl-list__item">
                             <span class="mdl-list__item-primary-content">
                                 <i class="material-icons mdl-list__item-icon">my_location</i>
-                                 Asset Type Precision: {{new_asset.assetType.precision}}
+                                 Asset Type Precision: {{asset.assetType.precision}}
                             </span>
                         </li>
-                        {% else %} {% endif %}
+
+                        {% endif %}
+
                     </ul>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                            <thead>
+                            <tr>
+                                <th class="mdl-data-table__cell--non-numeric">Address</th>
+                                <th class="mdl-data-table__cell--non-numeric">Holdings</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for addr, val in asset.holdings.iteritems() %}
+                            <tr>
+                                <td id="{{addr| shorten}}" class="mdl-data-table__cell--non-numeric">
+                                    {{addr | shorten}}
+                                    <div class="mdl-tooltip" data-mdl-for="{{addr| shorten}}">
+                                        {{addr}}
+                                    </div>
+                                </td>
+
+                                <td class="mdl-data-table__cell--non-numeric">{{val }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+
                 </div>
-                {% else %} {% endif %} {% if holdings %}
-                <br><br>
-                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-                    <thead>
-                        <tr>
-                            <th class="mdl-data-table__cell--non-numeric">Address</th>
-                            <th class="mdl-data-table__cell--non-numeric">Holdings</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for addr, val in holdings.iteritems() %}
-                        <tr>
-                            <td id="{{addr| shorten}}" class="mdl-data-table__cell--non-numeric">
-                                {{addr | shorten}}
-                                <div class="mdl-tooltip" data-mdl-for="{{addr| shorten}}">
-                                    {{addr}}
-                                </div>
-                            </td>
 
-                            <td class="mdl-data-table__cell--non-numeric">{{val | convert(atype.type, atype.precision)}}</td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td>No Holdings</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    {% else %}
-                    <div></div>
-                    {% endif %}
-                </table>
+                {% endif %}
             </div>
-
-            {% endif %}
         </div>
-
+        {% if not config.READONLY_MODE and asset%}
+        <a href="{{ url_for('public.assets')}}">
+            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored circle-btn">
+                {% if spinner %}
+                <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                {% else %}
+                <i class="material-icons">add</i>
+                {% endif %}
+            </button>
+        </a>
+        {% endif %}
     </div>
 </main>
 
-
-
-<script>
-    // Click to copy for addresses
-    function copyToClipboard(elementId) {
-        var aux = document.createElement("input");
-        aux.setAttribute("value", document.getElementById(elementId).innerHTML);
-        document.body.appendChild(aux);
-        aux.select();
-        document.execCommand("copy");
-        document.body.removeChild(aux);
-    }
-</script>
 {% endblock %}

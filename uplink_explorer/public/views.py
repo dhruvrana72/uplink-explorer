@@ -8,11 +8,11 @@ import gevent
 from flask import Blueprint, render_template, request, jsonify, flash
 from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
 from uplink.cryptography import read_key, save_key
-from uplink.exceptions import UplinkJsonRpcError
-from uplink_explorer.config import config
+from uplink.exceptions import UplinkJsonRpcError, RpcConnectionFail
+from uplink_explorer.config import config, ProdConfig
 from functools import wraps
 from flask import redirect, url_for, flash
-
+from uplink import exceptions
 
 from uplink_explorer.extensions import uplink
 
@@ -25,7 +25,7 @@ def readonly_mode_check(func):
     def decorated_function(*args, **kwargs):
         if config.READONLY_MODE:
             flash("Uplink explorer is running in readonly mode")
-            return redirect(url_for('public.show_index'))
+            return redirect(url_for('public.index'))
         return func(*args, **kwargs)
 
     return decorated_function
@@ -54,14 +54,46 @@ setX () {
 }
 """
 
+
 @blueprint.context_processor
 def inject_version():
-    return dict(version=uplink.version())
+    try:
+        version = uplink.version()
+    except RpcConnectionFail:
+        version = dict(commit='UNKNOWN', dirty=False, version='UNKNOWN', branch='UNKNOWN')
+    return dict(version=version)
+
+
+@blueprint.context_processor
+def peers():
+    try:
+        peers = len(uplink.peers())
+    except RpcConnectionFail:
+        peers = 0
+    return dict(peers=peers)
 
 
 @blueprint.context_processor
 def inject_config():
     return dict(config=config)
+
+
+@blueprint.errorhandler(RpcConnectionFail)
+def handle_rpc_connection_fail(error):
+    if config == ProdConfig:
+        from uplink_explorer.extensions import sentry
+        sentry.captureException(error)
+
+    return render_template("rpc_connection_failed.html")
+
+
+@blueprint.errorhandler(UplinkJsonRpcError)
+def handle_rpc_error(error):
+    if config == ProdConfig:
+        from uplink_explorer.extensions import sentry
+        sentry.captureException(error)
+
+    return render_template("rpc_error.html", error=error)
 
 
 def handle_results(res):
@@ -79,16 +111,13 @@ def handle_results(res):
 
 
 @blueprint.route('/', methods=['GET'])
-def show_index():
-    """Main Index Page and blocks"""
-
-    blockset = uplink.blocks()
-
-    return render_template('index.html', blockset=blockset)
+def blocks():
+    """Block list"""
+    return render_template('blocks.html', blocks=uplink.blocks())
 
 
 @blueprint.route('/blocks/<block_id>', methods=['GET'])
-def show_transactions(block_id):
+def transactions(block_id):
     """Present a table of transactions"""
     transactions = uplink.transactions(block_id)
     return render_template('transactions.html', transactions=transactions, block_id=block_id)
@@ -106,11 +135,16 @@ def show_tx_details(block_id, tx_id):
                            details=details)
 
 
-@blueprint.route('/accounts', methods=['GET', 'POST'])
-def show_accounts():
+@blueprint.route('/accounts/')
+@blueprint.route('/accounts/<addr>')
+def accounts(addr=None):
     """Present a table of accounts"""
     accounts = uplink.accounts()
-    return render_template('accounts.html', accounts=accounts)
+    if addr:
+        account = uplink.getaccount(addr)
+    else:
+        account = None
+    return render_template('accounts.html', accounts=accounts, account=account)
 
 
 @blueprint.route('/accounts/create', methods=['GET', 'POST'])
@@ -128,14 +162,6 @@ def create_account():
         metadata=metadata,
         timezone="GMT"
     )
-
-    # public_key_hex = codecs.encode(pubkey.to_string(), 'hex')
-    # new_acct_pubkey_qr = make_qrcode(
-    #     public_key_hex, "new_acct_pubKey")
-
-    # new_acct_addr_qr = make_qrcode(acct_addr, "new_acct_address")
-
-    # save pem of private key by short address account address as name
     privkey_pem = skey.to_pem()
     location = "./keys/{}".format(acct.address)
     save_key(privkey_pem, location)
@@ -145,7 +171,7 @@ def create_account():
         count += 1
         gevent.sleep(0.2)
 
-        if(count > 60):
+        if (count > 60):
             flash("failed to create account", 'error')
         try:
             acct_detail = uplink.getaccount(acct.address)
@@ -154,33 +180,19 @@ def create_account():
             continue
         break
 
-    accounts = uplink.accounts()
-    return render_template('accounts.html', accounts=accounts, newaccount=acct_detail, new_acct_pubkey_qr=None, new_acct_addr_qr=None)
+    return redirect(url_for('public.accounts', addr=acct.address))
 
 
-@blueprint.route('/accounts/address', methods=['GET', 'POST'])
-def account_by_address():
-    """present specific account metadata, lookup by address"""
-    address = request.form['submit']
-    accinfo = uplink.getaccount(address)
-
-    pubkey = accinfo.public_key
-    addr = accinfo.address
-
-    pubkey_qr = make_qrcode(pubkey, "pubKey")
-    addr_qr = make_qrcode(addr, "address")
-
-    accounts = uplink.accounts()
-
-    return render_template('accounts.html', accounts=accounts, accinfo=accinfo, pubkey_qr=pubkey_qr, addr_qr=addr_qr)
-
-
-@blueprint.route('/assets', methods=['GET', 'POST'])
-def show_assets():
+@blueprint.route('/assets/')
+@blueprint.route('/assets/<addr>')
+def assets(addr=None):
     """Present a table of assets"""
     assets = uplink.assets()
-
-    return render_template('assets.html', assets=assets)
+    if addr:
+        asset = uplink.getasset(addr)
+    else:
+        asset = None
+    return render_template('assets.html', assets=assets, asset=asset)
 
 
 @blueprint.route('/assets/create', methods=['GET', 'POST'])
@@ -195,12 +207,12 @@ def create_asset():
     issuer = request.form['issuer']
     precision = 0
 
-    if(str(asset_type) == "Discrete"):
+    if (str(asset_type) == "Discrete"):
         if int(supply) > maxNum:
             flash("{} given number cannot be larger than {}".format(
                 supply, maxNum), 'error')
 
-    if(str(asset_type) == "Fractional"):
+    if (str(asset_type) == "Fractional"):
         if supply > maxNum:
             flash("{} given number cannot be larger than {}".format(
                 supply, maxNum), 'error')
@@ -227,7 +239,7 @@ def create_asset():
     while True:
         count += 1
         gevent.sleep(0.2)
-        if(count > 60):
+        if (count > 60):
             flash("failed to create account", 'error')
         try:
             asset_details = uplink.getasset(newasset_addr)
@@ -235,35 +247,21 @@ def create_asset():
         except UplinkJsonRpcError:
             continue
         break
-    assets = uplink.assets()
 
-    return render_template('assets.html', assets=assets, new_asset=asset_details, new_asset_address=newasset_addr)
+    return redirect(url_for('public.assets', addr=newasset_addr))
 
 
-@blueprint.route('/assets/holdings', methods=['GET', 'POST'])
-def asset_holdings():
-    """get holdings of assets"""
-    asset_type = request.form['atype']
-
-    #  checks if precision exists
-    if request.form['prec'] is not False:
-        prec = request.form['prec']
-        atype = {u'type': asset_type, u'precision': prec}
-    else:
-        atype = {u'type': asset_type}
-
-    res = request.form['submit']
-    holdings = eval(res)
-    assets = uplink.assets()
-
-    return render_template('assets.html', assets=assets, holdings=holdings, atype=atype)
-
-@blueprint.route('/contracts', methods=['GET', 'POST'])
-def show_contracts():
+@blueprint.route('/contracts/')
+@blueprint.route('/contracts/<addr>')
+def contracts(addr=None):
     """Present a table of contracts"""
     contracts = uplink.contracts()
+    if addr:
+        contract = uplink.getcontract(addr)
+    else:
+        contract = None
     return render_template('contracts.html', contracts=contracts,
-            script=example_script)
+                           script=example_script, contract=contract)
 
 
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])
@@ -288,13 +286,25 @@ def create_contract():
     except IOError:
         flash("Invalid issuer address, no key found. Please try again", "error")
 
-    contracts = uplink.contracts()
+    count = 0
+    while True:
+        count += 1
+        gevent.sleep(0.2)
 
-    return render_template('contracts.html', contracts=contracts, new_contract_addr=new_contract_addr, script=script)
+        if (count > 60):
+            flash("failed to create contract", 'error')
+        try:
+            contract = uplink.getcontract(new_contract_addr)
+            print("new contract successfully created " + contract.address)
+        except UplinkJsonRpcError:
+            continue
+        break
+
+    return redirect(url_for('public.contracts', addr=new_contract_addr))
 
 
 @blueprint.route('/transactions/pending', methods=['GET', 'POST'])
-def pending_transactions():
+def transactions_pending():
     """Get Pending Transactions from Memory Pool"""
     pending_tx = uplink.get_mempool()
 

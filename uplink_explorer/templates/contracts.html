@@ -2,93 +2,171 @@
 <main class="mdl-layout__content">
     <div class="page-content">
         <br>
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--7-col">
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <thead>
+                    <tr>
+                        <th class="mdl-data-table__cell--non-numeric">Address</th>
+                        <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                        <th class="mdl-data-table__cell--non-numeric">Owner</th>
+                        <th class="mdl-data-table__cell--non-numeric">Script</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if contracts is not none %} {% for con in contracts %}
 
-        {% if not config.READONLY_MODE %}
-        <div class="mdl-cell mdl-cell--7-col" style="position:fixed;">
-            <div class="demo-card-square mdl-card mdl-shadow--2dp">
-                <div class="mdl-card__title">
-                    <h2 class="mdl-card__title-text">Create New Contract</h2>
+                    <tr {% if con.address== contract.address %} class="is-selected" {% endif %}>
+                        <td class="mdl-data-table__cell--non-numeric">
+                               <span class="mdl-chip" id="{{con.address | shorten}}">
+                                <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
+                                  fingerprint
+                                </span>
+                                <span class="mdl-chip__text" onclick="copyToClipboard('{{con.address | shorten}}copy')">{{con.address | shorten}}</span>
+                                </span>
+                            <div id="{{con.address | shorten}}copy" class="mdl-tooltip"
+                                 data-mdl-for="{{con.address | shorten}}">
+                                {{con.address}}
+                            </div>
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">{{con.timestamp | datetimeformat}}</td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <a href="{{ url_for('public.accounts', addr = con.owner) }}">
+                                {{con.owner}}
+                            </a>
+                        </td>
+                        <td>
 
-                </div>
-                {% if new_contract_addr %}
-                <div class="mdl-card__supporting-text">
-                    <h6>New Contract Contract Address</h6>
-                    <small>{{ new_contract_addr }}</small>
-                </div>
-                {% endif %}
-                <form action="{{ url_for('public.create_contract') }}" method="post">
-                    <div class="mdl-textfield mdl-js-textfield">
-                        <textarea class="mdl-textfield__input" name="script" type="text" rows="25" id="script">{{script}}</textarea>
-                        <label class="mdl-textfield__label" for="script">Enter Contract Script...</label>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="text" id="issuer" required name="issuer">
-                            <label class="mdl-textfield__label" for="issuer">Issuer</label>
-                        </div>
-                    </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <button type="submit" name="submit" value="create_contract" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                            Create Contract
-                        </button>
-                    </div>
-                </form>
+                            <a href="{{ url_for('public.contracts', addr = con.address) }}">
+                                <button
+                                        class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                                    <i class="material-icons">view_list</i>
+                                </button>
+                            </a>
+                        </td>
+
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
+                    </tr>
+                    {% endfor %} {% else %}
+                    <tr>
+                        <td>No contracts created yet</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+
 
             </div>
-        </div>
+            {% if contract is not none %}
+            <div class="mdl-cell mdl-cell--5-col">
+                <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Contract Address:
+                            <button id="{{contract.address}}" type="submit" name="submit" value="{{contract.address}}"
+                                    class="mdl-chip" onclick="copyToClipboard('{{contract.address}}copy')">
+                                      <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
+                                      fingerprint
+                                      </span>
+                                <span class="mdl-chip__text">{{contract.address}}</span>
+                            </button>
+                            <div class="mdl-tooltip" data-mdl-for="{{contract.address}}"
+                                 id="{{contract.address}}copy">
+                                {{contract.address}}
+                            </div>
+                        </h2>
+                    </div>
+                    <div class="mdl-grid mdl-cell--stretch">
 
-        {% endif %}
-        {% if contracts is not none %} {% for con in contracts %}
-        <div class="mdl-cell mdl-cell--5-col mdl-cell--7-offset">
+                        <div class="mdl-cell mdl-cell--10-col">
 
-            <div class="demo-card-square mdl-card mdl-shadow--2dp">
-                <div class="mdl-card__title">
-                    <h2 class="mdl-card__title-text">Contract Address: {{con.address | shorten}}</h2>
-                </div>
-                <div class="mdl-grid mdl-cell--stretch">
-
-                    <div class="mdl-cell mdl-cell--10-col">
-                        <h6>Full Address</h6>
-                        {{con.address}}
-                        <h6>Script</h6>
+                            <h6>Script</h6>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <pre contenteditable="false"><code class="view-script">{{contract.script}}</code></pre>
+                            </div>
+                        </div>
                         <div class="mdl-card__actions mdl-card--border">
-                            <pre contenteditable="false"><code class="view-script">{{con.script}}</code></pre>
+
+                            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                                <thead>
+                                <tr>
+                                    <th class="mdl-data-table__cell--non-numeric">Key</th>
+
+                                    <th class="mdl-data-table__cell--non-numeric">Values</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for key, value in contract.storage.iteritems() %}
+                                <tr>
+                                    {% if not value.tag is none %}
+                                    <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
+                                    <td>{{value | remove_extra_value}}</td>
+                                    {% else %} {% endif %}
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td>Nothing in storage</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-                        <thead>
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric">Key</th>
-
-                                <th class="mdl-data-table__cell--non-numeric">Values</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for key, value in con.storage.iteritems() %}
-                            <tr>
-                                {% if not value.tag is none %}
-                                <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
-                                <td>{{value | remove_extra_value}}</td>
-                                {% else %} {% endif %}
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td>Nothing in storage</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </div>
+            {% endif %}
 
-        {% else %}
-        <h5>No contracts available</h5>
-        {% endfor %} {% else %}
-        <div class="mdl-cell mdl-cell--5-col mdl-cell--7-offset">
-            <h5 style="text-align: right; padding-right:30px">No Contracts Created Yet</h5>
+            {% if not config.READONLY_MODE and not contract%}
+            <div class="mdl-cell mdl-cell--5-col">
+                <div class="demo-card-square mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Create New Contract</h2>
+
+                    </div>
+                    {% if new_contract_addr %}
+                    <div class="mdl-card__supporting-text">
+                        <h6>New Contract Contract Address</h6>
+                        <small>{{ new_contract_addr }}</small>
+                    </div>
+                    {% endif %}
+                    <form action="{{ url_for('public.create_contract') }}" method="post">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <textarea class="mdl-textfield__input" name="script" type="text" rows="25" id="script">{{script}}</textarea>
+                            <label class="mdl-textfield__label" for="script">Enter Contract Script...</label>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" id="issuer" required name="issuer">
+                                <label class="mdl-textfield__label" for="issuer">Issuer</label>
+                            </div>
+                        </div>
+                        <div class="mdl-card__actions mdl-card--border">
+                            <button type="submit" name="submit" value="create_contract"
+                                    class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                Create Contract
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+            {% endif %}
+            {% if not config.READONLY_MODE and contract%}
+            <a href="{{ url_for('public.contracts')}}">
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored circle-btn">
+                    {% if spinner %}
+                    <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                    {% else %}
+                    <i class="material-icons">add</i>
+                    {% endif %}
+                </button>
+            </a>
+            {% endif %}
+
         </div>
-        {% endif %}
     </div>
 
 </main>

@@ -6,7 +6,7 @@ import os
 
 class Config(object):
     """Base configuration."""
-    READONLY_MODE = not os.environ.get('READONLY') == "TRUE"
+    READONLY_MODE = not (os.environ.get('READONLY') == "TRUE")
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
 

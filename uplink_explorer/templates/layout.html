@@ -2,10 +2,23 @@
 <title>Block Explorer</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <!--<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">-->
-<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue_grey-light_blue.min.css" />
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue_grey-light_blue.min.css"/>
 <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
+<script>
+    // Click to copy for addresses
+    function copyToClipboard(elementId) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+        document.body.appendChild(aux);
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+    }
+
+
+
+</script>
 <!-- Always shows a header, even in smaller screens. -->
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
@@ -13,7 +26,7 @@
             <!-- Title -->
             <span class="mdl-layout-title">Block Explorer &nbsp;</span>
             <span class="mdl-chip mdl-chip--contact">
-            <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">{{0 | peers}}</span>
+            <span class="mdl-chip__contact mdl-color--red mdl-color-text--white">{{peers}}</span>
             <span id="peer" class="mdl-chip__text">Peer Count</span>
             <div class="mdl-tooltip" data-mdl-for="peer">
                 Number of peers in network
@@ -34,27 +47,27 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Block Explorer</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="/">Blocks</a>
-            <a class="mdl-navigation__link" href="/accounts">Accounts</a>
-            <a class="mdl-navigation__link" href="/assets">Assets</a>
-            <a class="mdl-navigation__link" href="/contracts">Contracts</a>
-            <a class="mdl-navigation__link" href="/transactions/pending">Pending Transactions</a>
+            <a class="mdl-navigation__link" href="{{ url_for('public.blocks') }}">Blocks</a>
+            <a class="mdl-navigation__link" href="{{ url_for('public.accounts') }}">Accounts</a>
+            <a class="mdl-navigation__link" href="{{ url_for('public.assets') }}">Assets</a>
+            <a class="mdl-navigation__link" href="{{ url_for('public.contracts') }}">Contracts</a>
+            <a class="mdl-navigation__link" href="{{ url_for('public.transactions_pending') }}">Pending Transactions</a>
         </nav>
 
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation mdl-layout--large-screen-only">
-          <p class="mdl-navigation__link">
-            commit: {{ version.commit }} 
-          </p>
-          <p class="mdl-navigation__link">
-            dirty: {{version.dirty }}
-          </p>
-          <p class="mdl-navigation__link">
-            version: {{ version.version }}
-          </p>
-          <p class="mdl-navigation__link">
-            branch: {{version.branch}}
-          </p> 
+            <p class="mdl-navigation__link">
+                commit: {{ version.commit }}
+            </p>
+            <p class="mdl-navigation__link">
+                dirty: {{version.dirty }}
+            </p>
+            <p class="mdl-navigation__link">
+                version: {{ version.version }}
+            </p>
+            <p class="mdl-navigation__link">
+                branch: {{version.branch}}
+            </p>
 
         </nav>
     </div>

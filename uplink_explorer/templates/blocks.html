@@ -16,7 +16,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if blockset is not none %} {% for block in blockset %}
+                        {% if blocks is not none %} {% for block in blocks %}
                         <tr>
                             <td id="{{block.header.merkleRoot | shorten }}" class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | shorten }}
                                 <div class="mdl-tooltip" data-mdl-for="{{block.header.merkleRoot | shorten}}">
@@ -35,7 +35,7 @@
                                 </div>
                             </td>
                             <td>
-                                <a href="{{ url_for('public.show_transactions', block_id = block.index) }}"><i class="material-icons">pageview</i></a>
+                                <a href="{{ url_for('public.transactions', block_id = block.index) }}"><i class="material-icons">pageview</i></a>
 
                             </td>
                         </tr>

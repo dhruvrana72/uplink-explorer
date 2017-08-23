@@ -50,16 +50,6 @@ def shorten_key(context, string):
 
 @jinja2.contextfilter
 @blueprint.app_template_filter()
-def peers(context, p):
-    """Peers filter"""
-    results = uplink.peers()
-    peers = len(results)
-
-    return peers
-
-
-@jinja2.contextfilter
-@blueprint.app_template_filter()
 def convert(context, value, atype, prec=0):
     """
         convert asset type fractional to fixed precision
