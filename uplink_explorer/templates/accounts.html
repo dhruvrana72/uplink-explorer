@@ -4,7 +4,7 @@
         <br>
 
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--5-col">
+            <div class="mdl-cell mdl-cell--5-col mobile-table-grid">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                     <tr>
@@ -68,11 +68,9 @@
                         <h6>Public key</h6>
                         <p style="word-wrap:break-word">{{account.public_key}}
                         </p>
-                        <img style="width:150px" src="data:image/png;base64,{{pubkey_qr | safe}}"/>
 
                         <h6>Full Address</h6>
                         {{account.address}}<br/>
-                        <img style="width:150px" src="data:image/png;base64,{{addr_qr | safe}}"/>
                         <ul class="demo-list-two mdl-list">
                             {% for meta in account.metadata %}
                             <li class="mdl-list__item mdl-list__item--two-line">

@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
+CMD pytest -s -vv /usr/src/app/tests/ && pytest -s -vv /usr/src/app/tests/ && ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent

@@ -4,7 +4,7 @@
         <br>
 
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--6-col">
+            <div class="mdl-cell mdl-cell--6-col mobile-table-grid">
                 <h5>Transactions in block {{block_id}}</h5>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
@@ -60,7 +60,7 @@
                 </table>
             </div>
             {% if details %}
-            <div class="mdl-cell mdl-cell--4-col">
+            <div class="mdl-cell mdl-cell--4-col mobile-table-grid">
                 <h5>Details</h5>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     {% if details.header.contents.tag is equalto 'CreateAsset' %}

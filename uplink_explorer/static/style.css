@@ -74,3 +74,11 @@ button.mdl-chip {
 .mdl-list__item {
     padding: 0 16px;
 }
+
+@media(max-width:479px) {
+    .mobile-table-grid {
+        overflow-x: scroll;
+        overflow-scrolling: touch;
+        -webkit-overflow-scroll: touch;
+    }
+}
