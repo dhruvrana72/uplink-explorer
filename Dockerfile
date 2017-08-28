@@ -17,5 +17,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 
-CMD pytest -s -vv /usr/src/app/src/uplink-sdk-py/integration_tests && ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
+CMD RPC_HOST=bootnode pytest -s -vv /usr/src/app/src/uplink-sdk-py/integration_tests && ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
 
