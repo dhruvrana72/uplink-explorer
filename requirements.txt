@@ -1,7 +1,7 @@
 Flask == 0.10.1
 Flask-Script == 0.4.0
 requests == 2.11.1
-jinja2 >=2.6 
+jinja2 >=2.6
 gevent == 1.2.1
 
 # crypto
@@ -12,8 +12,7 @@ pysha3 == 1.0.2
 pytest == 3.0.6
 
 # uplink-sdk-py
-https://1f03a3dc3d760932d7a18ef163bee316ee4c57e9@github.com/adjoint-io/uplink-sdk-py/archive/master.zip
-
+-e git+https://1f03a3dc3d760932d7a18ef163bee316ee4c57e9@github.com/adjoint-io/uplink-sdk-py/#egg=uplink-sdk-py
 
 # qr codes
 git+git://github.com/lincolnloop/python-qrcode.git
