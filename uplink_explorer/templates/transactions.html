@@ -23,9 +23,9 @@
 
                             <td class="mdl-data-table__cell--non-numeric">{{tx.timestamp | datetimeformat}}</td>
 
-                            <td id="{{tx.origin.contents |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.origin | shorten}}copy')">{{tx.origin | shorten}}
-                                <div class="mdl-tooltip" data-mdl-for="{{tx.origin | shorten }}" id="{{tx.origin.contents | shorten }}copy">
-                                    {{tx.origin.contents}} {{tx.origin.tag}}
+                            <td id="{{tx.origin |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{tx.origin | shorten}}copy')">{{tx.origin | shorten}}
+                                <div class="mdl-tooltip" data-mdl-for="{{tx.origin | shorten }}" id="{{tx.origin | shorten }}copy">
+                                    {{tx.origin}}
                                 </div>
                             </td>
 
@@ -82,35 +82,44 @@
                         </tr>
                     </tbody>
                     {% endif %} {% if details.header.contents.tag is equalto 'Call' %}
-
                     <thead>
                         <tr>
-                            <th>Contract Method Called</th>
+                            <th>Contract</th>
+                            <th>Method</th>
+                            <th>Arguments</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{details.header.contents.contents}}</td>
-                        </tr>
-                    </tbody>
-                    {% endif %} {% if details.header.contents.tag is equalto 'CreateAccount' %}
-                    <thead>
-                        <tr>
-                            <th>Timezone</th>
-                            <th>Public Key</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{details.header.contents.contents.timezone}}</td>
-                            <td id="{{details.header.contents.contents.pubKey |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{details.header.contents.contents.pubKey | shorten_key}}copy')">{{details.header.contents.contents.pubKey | shorten_key}}
-                                <div class="mdl-tooltip" data-mdl-for="{{details.header.contents.contents.pubKey | shorten }}" id="{{details.header.contents.contents.pubKey | shorten_key }}copy">
-                                    {{details.header.contents.contents.pubKey}}
+                            <td id="{{details.header.contents.contents.address |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{details.header.contents.contents.address | shorten_key}}copy')">{{details.header.contents.contents.address | shorten_key}}
+                                <div class="mdl-tooltip" data-mdl-for="{{details.header.contents.contents.address | shorten }}" id="{{details.header.contents.contents.address | shorten_key }}copy">
+                                    {{details.header.contents.contents.address}}
                                 </div>
                             </td>
-
+                            <td>{{details.header.contents.contents.method}}</td>
+                            <td>
+                                {% for arg in details.header.contents.contents.args %}<span>{{arg}},</span> {% endfor %}
+                            </td>
                         </tr>
-                    </tbody>
+
+                        {% endif %} {% if details.header.contents.tag is equalto 'CreateAccount' %}
+                        <thead>
+                            <tr>
+                                <th>Timezone</th>
+                                <th>Public Key</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{details.header.contents.contents.timezone}}</td>
+                                <td id="{{details.header.contents.contents.pubKey |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{details.header.contents.contents.pubKey | shorten_key}}copy')">{{details.header.contents.contents.pubKey | shorten_key}}
+                                    <div class="mdl-tooltip" data-mdl-for="{{details.header.contents.contents.pubKey | shorten }}" id="{{details.header.contents.contents.pubKey | shorten_key }}copy">
+                                        {{details.header.contents.contents.pubKey}}
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
                 </table>
                 <br><br>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">

@@ -7,65 +7,62 @@
             <div class="mdl-cell mdl-cell--7-col mobile-table-grid">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
-                    <tr>
-                        <th class="mdl-data-table__cell--non-numeric">Address</th>
-                        <th class="mdl-data-table__cell--non-numeric">Name</th>
-                        <th class="mdl-data-table__cell--non-numeric">Issuer</th>
-                        <th class="mdl-data-table__cell--non-numeric">Reference</th>
-                        <th class="mdl-data-table__cell--non-numeric">Asset Type</th>
-                        <th>Total Supply</th>
-                        <th>Issued On</th>
-                        <th class="mdl-data-table__cell--non-numeric">Holdings</th>
-                    </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">Name</th>
+                            <th class="mdl-data-table__cell--non-numeric">Issuer</th>
+                            <th class="mdl-data-table__cell--non-numeric">Reference</th>
+                            <th class="mdl-data-table__cell--non-numeric">Asset Type</th>
+                            <th>Total Supply</th>
+                            <th>Issued On</th>
+                            <th class="mdl-data-table__cell--non-numeric">Holdings</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% if assets is not none %} {% for ass in assets %}
+                        {% if assets is not none %} {% for ass in assets %}
 
-                    <tr {% if ass.address== asset.address %} class="is-selected" {% endif %}>
-                        <td class="mdl-data-table__cell--non-numeric">
+                        <tr {% if ass.address==asset.address %} class="is-selected" {% endif %}>
+                            <td class="mdl-data-table__cell--non-numeric">
                                 <span class="mdl-chip" id="{{ass.address | shorten}}">
-                                <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white material-icons">
-                                  fingerprint
+                                <span class="mdl-chip__contact mdl-color--green mdl-color-text--white material-icons">
+                                  credit_card
                                 </span>
                                 <span class="mdl-chip__text" onclick="copyToClipboard('{{ass.address | shorten}}copy')">{{ass.address | shorten}}</span>
                                 </span>
-                            <div id="{{ass.address | shorten}}copy" class="mdl-tooltip"
-                                 data-mdl-for="{{ass.address | shorten}}">
-                                {{ass.address}}
-                            </div>
-                        </td>
-                        <td class="mdl-data-table__cell--non-numeric">{{ass.name}}</td>
-                        <td ID="{{ass.issuer | shorten}}" class="mdl-data-table__cell--non-numeric"
-                            onclick="copyToClipboard('{{ass.issuer | shorten}}copy')">
-                            {{ass.issuer | shorten}}
-                            <div id="{{ass.issuer | shorten}}copy" class="mdl-tooltip"
-                                 data-mdl-for="{{ass.issuer | shorten}}">{{ass.issuer}}
-                            </div>
-                        </td>
+                                <div id="{{ass.address | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{ass.address | shorten}}">
+                                    {{ass.address}}
+                                </div>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.name}}</td>
+                            <td ID="{{ass.issuer | shorten}}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{ass.issuer | shorten}}copy')">
+                                {{ass.issuer | shorten}}
+                                <div id="{{ass.issuer | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{ass.issuer | shorten}}">{{ass.issuer}}
+                                </div>
+                            </td>
 
-                        <td class="mdl-data-table__cell--non-numeric">{{ass.reference}}</td>
-                        <td class="mdl-data-table__cell--non-numeric">{{ass.assetType.type}}</td>
-                        <td>{{ass.supply | convert(ass.assetType.type, ass.assetType.precision)}}</td>
-                        <td>{{ass.issuedOn | datetimeformat}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.reference}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ass.assetType.type}}</td>
+                            <td>{{ass.supply | convert(ass.assetType.type, ass.assetType.precision)}}</td>
+                            <td>{{ass.issuedOn | datetimeformat}}</td>
 
-                        <td>
-                            <a href="{{ url_for('public.assets', addr = ass.address) }}">
-                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                            <td>
+                                <a href="{{ url_for('public.assets', addr = ass.address) }}">
+                                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                     <i class="material-icons">view_list</i>
                                 </button>
-                            </a>
+                                </a>
 
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
-                    </tr>
-                    {% endfor %} {% else %}
-                    <tr>
-                        <td>No Assets Created Yet</td>
-                    </tr>
-                    {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
+                        </tr>
+                        {% endfor %} {% else %}
+                        <tr>
+                            <td>No Assets Created Yet</td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
 
@@ -90,18 +87,15 @@
                                 <label class="mdl-textfield__label" for="name">Name</label>
                             </div>
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
-                                       id="supply" required name="supply">
+                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="supply" required name="supply">
                                 <label class="mdl-textfield__label" for="supply">Supply</label>
                                 <span class="mdl-textfield__error">Input is not a number</span>
                             </div>
                             <br>
                             <div>
                                 <h6 id="aType">Asset Type</h6>
-                                <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="aType"
-                                     style="text-align:left !important">
-                                    Fractional - fixed point precision - e.g. 1.2345671 - (precision is 10^-7) <br>
-                                    Discrete - integer - e.g. 3 <br> Binary - held or not-held. held if greater than 0
+                                <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="aType" style="text-align:left !important">
+                                    Fractional - fixed point precision - e.g. 1.2345671 - (precision is 10^-7) <br> Discrete - integer - e.g. 3 <br> Binary - held or not-held. held if greater than 0
                                 </div>
                                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="discrete">
                                     <input type="radio" id="discrete" class="mdl-radio__button" name="asset_type"
@@ -155,8 +149,7 @@
                         </div>
 
                         <div class="mdl-card__actions mdl-card--border">
-                            <button type="submit" name="submit" value="create_asset"
-                                    class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                            <button type="submit" name="submit" value="create_asset" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                                 Create
                             </button>
                         </div>
@@ -223,26 +216,26 @@
                     <div class="mdl-card__actions mdl-card--border">
                         <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                             <thead>
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric">Address</th>
-                                <th class="mdl-data-table__cell--non-numeric">Holdings</th>
-                            </tr>
+                                <tr>
+                                    <th class="mdl-data-table__cell--non-numeric">Address</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Holdings</th>
+                                </tr>
                             </thead>
                             <tbody>
 
-                            {% for addr, val in asset.holdings.iteritems() %}
-                            <tr>
-                                <td id="{{addr| shorten}}" class="mdl-data-table__cell--non-numeric">
-                                    {{addr | shorten}}
-                                    <div class="mdl-tooltip" data-mdl-for="{{addr| shorten}}">
-                                        {{addr}}
-                                    </div>
-                                </td>
+                                {% for addr, val in asset.holdings.iteritems() %}
+                                <tr>
+                                    <td id="{{addr| shorten}}" class="mdl-data-table__cell--non-numeric">
+                                        {{addr | shorten}}
+                                        <div class="mdl-tooltip" data-mdl-for="{{addr| shorten}}">
+                                            {{addr}}
+                                        </div>
+                                    </td>
 
-                                <td class="mdl-data-table__cell--non-numeric">{{val }}
-                                </td>
-                            </tr>
-                            {% endfor %}
+                                    <td class="mdl-data-table__cell--non-numeric">{{val }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
 
                         </table>
