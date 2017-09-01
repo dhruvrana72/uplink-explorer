@@ -1,7 +1,7 @@
 FROM python:2.7-alpine
 
 WORKDIR /usr/src/app
-RUN apk add --update git openssh gcc musl-dev libffi-dev openssl-dev
+RUN apk add --update git openssh gcc musl-dev libffi-dev openssl-dev curl
 
 
 # since image we push to the registry is squashed, our keys stay secret
@@ -16,6 +16,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-
-CMD RPC_HOST=bootnode pytest -s -vv /usr/src/app/src/uplink-sdk-py/integration_tests && ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
+CMD ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
 
