@@ -84,16 +84,21 @@ def handle_rpc_connection_fail(error):
         from uplink_explorer.extensions import sentry
         sentry.captureException()
 
-    return render_template("rpc_connection_failed.html")
+    return render_template("rpc_error.html", title="RPC connection failed", tag='',
+                           message="Failed to connect to the RPC server at {}".format(config.RPC_HOST))
 
 
 @blueprint.errorhandler(UplinkJsonRpcError)
 def handle_rpc_error(error):
-    if config == ProdConfig:
+    title = error.response.get("contents", dict()).get("errorType")
+    tag = error.response.get("tag")
+    message = error.response['contents']['errorMsg']
+
+    if config == ProdConfig and tag not in ["NotFound"]:
         from uplink_explorer.extensions import sentry
         sentry.captureException()
 
-    return render_template("rpc_error.html", error=error)
+    return render_template("rpc_error.html", title=title, tag=tag, message=message)
 
 
 def handle_results(res):
