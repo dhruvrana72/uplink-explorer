@@ -4,7 +4,7 @@
     <div class="page-content">
         <br>
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--8-col mobile-table-grid ">
+            <div class="mdl-cell mdl-cell--8-col">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
@@ -16,7 +16,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if blocks is not none %} {% for block in blocks %}
+                        {% if blockset is not none %} {% for block in blockset %}
                         <tr>
                             <td id="{{block.header.merkleRoot | shorten }}" class="mdl-data-table__cell--non-numeric">{{block.header.merkleRoot | shorten }}
                                 <div class="mdl-tooltip" data-mdl-for="{{block.header.merkleRoot | shorten}}">
@@ -29,14 +29,13 @@
                                     {{block.header.origin}}
                                 </div>
                             </td>
-                            <td id="{{block.header.prevHash | shorten}}"
-                              class="mdl-data-table__cell--non-numeric">{{block.header.prevHash | shorten}}
+                            <td id="{{block.header.prevHash | shorten}}" class="mdl-data-table__cell--non-numeric">{{block.header.prevHash | shorten}}
                                 <div class="mdl-tooltip" data-mdl-for="{{block.header.prevHash | shorten}}">
                                     {{block.header.prevHash}}
                                 </div>
                             </td>
                             <td>
-                                <a href="{{ url_for('public.transactions', block_id = block.index) }}"><i class="material-icons">pageview</i></a>
+                                <a href="{{ url_for('public.show_transactions', block_id = block.index) }}"><i class="material-icons">pageview</i></a>
 
                             </td>
                         </tr>
@@ -52,7 +51,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mdl-cell mdl-cell--4-col  mdl-layout--large-screen-only">
+            <div class="mdl-cell mdl-cell--4-col">
                 <div class="demo-card-wide mdl-card mdl-shadow--2dp">
                     <div class="mdl-card__title">
                         <h2 class="mdl-card__title-text">Community Edition</h2>
