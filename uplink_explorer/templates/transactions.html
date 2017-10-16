@@ -120,6 +120,23 @@
 
                             </tr>
                         </tbody>
+
+                        {% if details.header.contents.contents.tag is equalto 'Revoke' %}
+                        <thead>
+                            <tr>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="{{details.header.contents.contents.address |shorten }}" class="mdl-data-table__cell--non-numeric" onclick="copyToClipboard('{{details.header.contents.contents.address | shorten}}copy')">{{details.header.contents.contents.address | shorten}}
+                                    <div class="mdl-tooltip" data-mdl-for="{{details.header.contents.contents.address | shorten }}" id="{{details.header.contents.contents.address | shorten }}copy">
+                                        {{details.header.contents.contents.address}}
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        {% endif %}
                 </table>
                 <br><br>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">

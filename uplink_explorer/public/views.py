@@ -60,7 +60,8 @@ def inject_version():
     try:
         version = uplink.version()
     except RpcConnectionFail:
-        version = dict(commit='UNKNOWN', dirty=False, version='UNKNOWN', branch='UNKNOWN')
+        version = dict(commit='UNKNOWN', dirty=False,
+                       version='UNKNOWN', branch='UNKNOWN')
     return dict(version=version)
 
 
@@ -133,7 +134,8 @@ def show_tx_details(block_id, tx_id):
     """Present a table of transaction details"""
 
     transactions = uplink.transactions(block_id)
-
+    import pdb
+    pdb.set_trace()
     details = list(filter(lambda tx: tx.signature == tx_id, transactions))[0]
 
     return render_template('transactions.html', transactions=transactions, block_id=block_id,
