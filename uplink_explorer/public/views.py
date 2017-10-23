@@ -3,8 +3,9 @@ Pages serving HTML content that interact with Flask
 """
 
 import json
-
 import gevent
+from os import listdir
+from os.path import isfile, join
 from flask import Blueprint, render_template, request, jsonify, flash
 from uplink.cryptography import ecdsa_new, make_qrcode, derive_account_address
 from uplink.cryptography import read_key, save_key
@@ -197,7 +198,12 @@ def assets(addr=None):
         asset = uplink.getasset(addr)
     else:
         asset = None
-    return render_template('assets.html', assets=assets, asset=asset)
+
+    path = "./keys/"
+    keyfiles = [f.replace('.pem', '')
+                for f in listdir(path) if isfile(join(path, f))]
+
+    return render_template('assets.html', assets=assets, asset=asset, keyfiles=keyfiles)
 
 
 @blueprint.route('/assets/create', methods=['GET', 'POST'])
@@ -209,6 +215,7 @@ def create_asset():
     supply = request.form['supply']
     asset_type = request.form['asset_type']
     reference = request.form['reference']
+
     issuer = request.form['issuer']
     precision = 0
 
@@ -265,8 +272,13 @@ def contracts(addr=None):
         contract = uplink.getcontract(addr)
     else:
         contract = None
+
+    path = "./keys/"
+    keyfiles = [f.replace('.pem', '')
+                for f in listdir(path) if isfile(join(path, f))]
+
     return render_template('contracts.html', contracts=contracts,
-                           script=example_script, contract=contract)
+                           script=example_script, contract=contract, keyfiles=keyfiles)
 
 
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])

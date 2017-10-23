@@ -78,10 +78,16 @@
                     </div>
                     <form action="{{ url_for('public.create_asset')}}" method="post">
                         <div class="mdl-card__supporting-text">
-                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" id="issuer" required name="issuer">
-                                <label class="mdl-textfield__label" for="issuer">Issuer</label>
-                            </div>
+
+                            <label>
+                            <div>Select Issuer</div>
+                                <select name="issuer">
+                                    {% for key in keyfiles %}
+                                        <option class="mdl-menu__item" value="{{key}}">{{key}}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                                 <input class="mdl-textfield__input" type="text" id="name" required name="name">
                                 <label class="mdl-textfield__label" for="name">Name</label>
@@ -255,8 +261,7 @@
                 <i class="material-icons">add</i>
                 {% endif %}
             </button>
-        </a>
-        {% endif %}
+        </a> {% endif %}
     </div>
 </main>
 
