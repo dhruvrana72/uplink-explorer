@@ -6,7 +6,6 @@ import json
 import jinja2
 import flask
 from uplink_explorer.extensions import uplink
-from uplink_explorer.utils import formatPrec
 
 blueprint = flask.Blueprint('filters', __name__)
 
@@ -32,6 +31,7 @@ FPREC = 0.0000001
 @blueprint.app_template_filter()
 def shorten(context, string):
     """shorten addresses for readability"""
+
     if string:
         return string[0:CUTLENGTH]
     else:
@@ -60,9 +60,7 @@ def convert(context, value, atype, prec=0):
             return value
 
         if atype == 'Fractional':
-
-            result = formatPrec(prec, value)
-            return result
+            return value * pow(10, (-prec))
 
         if atype == 'Binary':
             if value <= 0:

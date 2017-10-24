@@ -3,6 +3,10 @@ Pages serving HTML content that interact with Flask
 """
 
 import json
+from flask_wtf import FlaskForm
+from wtforms import IntegerField, FloatField, BooleanField, DateTimeField, TextField, HiddenField
+from wtforms.validators import DataRequired
+
 import gevent
 from os import listdir
 from os.path import isfile, join
@@ -199,25 +203,21 @@ def assets(addr=None):
     else:
         asset = None
 
-    path = "./keys/"
-    keyfiles = [f.replace('.pem', '')
-                for f in listdir(path) if isfile(join(path, f))]
-
-    return render_template('assets.html', assets=assets, asset=asset, keyfiles=keyfiles)
+    return render_template('assets.html', assets=assets, asset=asset, keyfiles=get_keys())
 
 
-@blueprint.route('/assets/create', methods=['GET', 'POST'])
+@blueprint.route('/assets/create', methods=['POST'])
 @readonly_mode_check
 def create_asset():
     """Create a new asset"""
 
     name = request.form['name']
     supply = request.form['supply']
+
     asset_type = request.form['asset_type']
     reference = request.form['reference']
-
-    issuer = request.form['issuer']
     precision = 0
+    issuer = request.form['issuer']
 
     if (str(asset_type) == "Discrete"):
         if int(supply) > maxNum:
@@ -225,13 +225,12 @@ def create_asset():
                 supply, maxNum), 'error')
 
     if (str(asset_type) == "Fractional"):
-        if supply > maxNum:
+        if int(supply) > maxNum:
             flash("{} given number cannot be larger than {}".format(
                 supply, maxNum), 'error')
 
-        whole, fractional = map(int, str(supply).split("."))
-        precision = len(str(fractional))
-        supply = int(str(whole) + str(fractional))
+        precision = int(request.form['precision'])
+        supply = int(str(supply) + str('0' * precision))
 
     if precision > 7:
         flash("number cannot be smaller than 0.0000001", 'error')
@@ -239,11 +238,13 @@ def create_asset():
     from_address = issuer
     location = "./keys/{}.pem".format(issuer)
     private_key = read_key(location)
-
+    result, newasset_addr = uplink.create_asset(
+        private_key, from_address, name, supply, asset_type, reference, issuer, precision)
     try:
         result, newasset_addr = uplink.create_asset(
             private_key, from_address, name, supply, asset_type, reference, issuer, precision)
     except UplinkJsonRpcError as result:
+        print(result)
         new_contract_addr = ""
         flash(result.response.get('contents').get('errorMsg'), 'error')
 
@@ -251,7 +252,7 @@ def create_asset():
     while True:
         count += 1
         gevent.sleep(0.2)
-        if (count > 60):
+        if count > 60:
             flash("failed to create account", 'error')
         try:
             asset_details = uplink.getasset(newasset_addr)
@@ -264,21 +265,39 @@ def create_asset():
 
 
 @blueprint.route('/contracts/')
-@blueprint.route('/contracts/<addr>')
+@blueprint.route('/contracts/<addr>', methods=['GET', 'POST'])
 def contracts(addr=None):
     """Present a table of contracts"""
     contracts = uplink.contracts()
     if addr:
+        # forms = get_contract_method_forms(addr)
+        forms = None
         contract = uplink.getcontract(addr)
     else:
         contract = None
-
-    path = "./keys/"
-    keyfiles = [f.replace('.pem', '')
-                for f in listdir(path) if isfile(join(path, f))]
+        forms = None
 
     return render_template('contracts.html', contracts=contracts,
-                           script=example_script, contract=contract, keyfiles=keyfiles)
+                           script=example_script, contract=contract, keyfiles=get_keys(), forms=forms)
+
+
+#
+# @blueprint.route('/contracts/<addr>/call', methods=['POST'])
+# def call_contract(addr):
+#     method_name = request.form['method_name'].encode()
+#     form = get_method_form(addr, method_name)
+#
+#     if form.validate_on_submit():
+#         # issuer
+#         location = "./keys/{}.pem".format(issuer)
+#         private_key = read_key(location)
+#         uplink.call_contract(private_key=private_key, from_address=issuer,
+#                              contract_addr=addr,
+#                              method=method_name,
+#                              args=[VInt(42)])
+#     print(form.errors)
+#
+#     return redirect(url_for('public.contracts', addr=addr))
 
 
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])
@@ -326,3 +345,39 @@ def transactions_pending():
     pending_tx = uplink.get_mempool()
 
     return render_template('pending_tx.html', pending=pending_tx)
+
+
+def get_contract_method_forms(addr):
+    res = uplink.get_contract_callable(addr)
+    forms = {method_name: get_method_form(addr, method_name, args) for method_name, args in
+             res.iteritems()}
+
+    return forms
+
+
+def get_method_form(addr, method_name, args=None):
+    args = {"fn_int": [["a", "int"]], "fn_float": [["b", "float"]], "fn_void": [["a", "void"]],
+            "fn_msg": [["c", "msg"]], "fn_account": [["a", "account"]],
+            "fn_bool": [["x", "bool"], ["b", "float"]],
+            "fn_asset": [["a", "asset"]], "fn_contract": [["e", "contract"]],
+            "never_called": [["a", "void"]]}[method_name]
+
+    form = type(method_name, (FlaskForm,), {"method_name": HiddenField()})
+
+    for (name, typ) in args:
+        if typ == "int":
+            setattr(form, name, IntegerField(validators=[DataRequired()]))
+        elif typ == "float":
+            setattr(form, name, FloatField(validators=[DataRequired()]))
+        elif typ in ["account", "asset", "contract", "msg"]:
+            setattr(form, name, TextField(validators=[DataRequired()]))
+        elif typ == "bool":
+            setattr(form, name, BooleanField(validators=[DataRequired()]))
+
+    return form(method_name=method_name)
+
+
+def get_keys():
+    path = "./keys/"
+    return [f.replace('.pem', '')
+            for f in listdir(path) if isfile(join(path, f)) and not f == ".gitkeep"]

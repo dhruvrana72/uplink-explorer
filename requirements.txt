@@ -10,6 +10,8 @@ pysha3 == 1.0.2
 
 # Testing
 pytest == 3.0.6
+flask_wtf
+wtforms
 
 # uplink-sdk-py
 -e git+https://github.com/adjoint-io/uplink-sdk-python/#egg=uplink-sdk-py

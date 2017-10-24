@@ -1,4 +1,6 @@
 {% extends "layout.html" %} {% block body %}
+{% from "_form_helpers.html" import render_field %}
+
 <main class="mdl-layout__content">
     <div class="page-content">
         <br>
@@ -10,7 +12,7 @@
                             <th class="mdl-data-table__cell--non-numeric">Address</th>
                             <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
                             <th class="mdl-data-table__cell--non-numeric">Owner</th>
-                            <th class="mdl-data-table__cell--non-numeric">Script</th>
+                            <th class="mdl-data-table__cell--non-numeric">View Contract</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,13 +87,26 @@
                     </div>
                     <div class="mdl-grid mdl-cell--stretch">
 
-                        <div class="mdl-cell mdl-cell--10-col mobile-table-grid">
+                        {% if forms is not none %}
+                        {% for name, method in forms.items() %}
+                            <form method="POST" action="{{ url_for('public.call_contract', addr=contract.address) }}">
+                                    {% for field in method._fields %}
+                                        {%  if not field == "csrf_token" and not method[field].data%}
+                                            {{method[field].label}}
+                                            {{method[field]}}
+                                        {% endif %}
 
-                            <h6>Script</h6>
-                            <div class="mdl-card__actions mdl-card--border">
-                                <pre contenteditable="false"><code class="view-script">{{contract.script}}</code></pre>
-                            </div>
-                        </div>
+                                    {% endfor %}
+                                {{ method.hidden_tag() }}
+                                <button
+                                        class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    {{ method.method_name.data }}
+                                </button>
+
+                            </form>
+                         {% endfor %}
+                        {% endif %}
+
                         <div class="mdl-card__actions mdl-card--border">
 
                             <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
@@ -118,6 +133,14 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mdl-cell mdl-cell--10-col mobile-table-grid">
+
+                            <h6>Script</h6>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <pre contenteditable="false"><code class="view-script">{{contract.script}}</code></pre>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
