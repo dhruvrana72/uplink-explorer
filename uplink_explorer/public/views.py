@@ -238,8 +238,6 @@ def create_asset():
     from_address = issuer
     location = "./keys/{}.pem".format(issuer)
     private_key = read_key(location)
-    result, newasset_addr = uplink.create_asset(
-        private_key, from_address, name, supply, asset_type, reference, issuer, precision)
     try:
         result, newasset_addr = uplink.create_asset(
             private_key, from_address, name, supply, asset_type, reference, issuer, precision)
