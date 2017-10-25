@@ -4,8 +4,8 @@ Pages serving HTML content that interact with Flask
 
 import json
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, FloatField, BooleanField, DateTimeField, TextField, HiddenField
-from wtforms.validators import DataRequired
+from wtforms import IntegerField, FloatField, BooleanField, DateTimeField, StringField, HiddenField
+from wtforms.validators import InputRequired
 
 import gevent
 from os import listdir
@@ -17,8 +17,8 @@ from uplink.exceptions import UplinkJsonRpcError, RpcConnectionFail
 from uplink_explorer.config import config, ProdConfig
 from functools import wraps
 from flask import redirect, url_for, flash
-from uplink import exceptions
-
+from uplink import *
+from wtforms_html5 import AutoAttrMeta
 from uplink_explorer.extensions import uplink
 
 # this number should go somewhere better
@@ -197,13 +197,39 @@ def create_account():
 @blueprint.route('/assets/<addr>')
 def assets(addr=None):
     """Present a table of assets"""
+    accounts = uplink.accounts()
     assets = uplink.assets()
     if addr:
         asset = uplink.getasset(addr)
+
     else:
         asset = None
+    return render_template('assets.html', assets=assets, accounts=accounts, asset=asset, keyfiles=get_keys())
 
-    return render_template('assets.html', assets=assets, asset=asset, keyfiles=get_keys())
+
+@blueprint.route('/assets/<addr>/transfer/', methods=['POST'])
+@readonly_mode_check
+def transfer_asset(addr):
+    from_address = request.form['from']
+    to_address = request.form['to_address']
+    balance = int(request.form['balance'])
+    asset = uplink.getasset(addr)
+
+    actual_balance = int(str(balance) + str('0' * (asset.assetType.precision or 0)))
+
+    location = "./keys/{}.pem".format(from_address)
+    private_key = read_key(location)
+
+    receipt = uplink.transfer_asset(
+        private_key, from_address, to_address, actual_balance, addr)
+
+    gevent.sleep(1)  # :(
+
+    if receipt['tag'] == 'RPCRespOK':
+        flash("Transfer Successful", 'success')
+    else:
+        flash("Transfer Failed. Did you circulate the account to yourself first?", 'error')
+    return redirect(url_for('public.assets', addr=addr))
 
 
 @blueprint.route('/assets/create', methods=['POST'])
@@ -268,8 +294,8 @@ def contracts(addr=None):
     """Present a table of contracts"""
     contracts = uplink.contracts()
     if addr:
-        # forms = get_contract_method_forms(addr)
-        forms = None
+        forms = get_contract_method_forms(addr)
+        # forms = None
         contract = uplink.getcontract(addr)
     else:
         contract = None
@@ -279,23 +305,29 @@ def contracts(addr=None):
                            script=example_script, contract=contract, keyfiles=get_keys(), forms=forms)
 
 
-#
-# @blueprint.route('/contracts/<addr>/call', methods=['POST'])
-# def call_contract(addr):
-#     method_name = request.form['method_name'].encode()
-#     form = get_method_form(addr, method_name)
-#
-#     if form.validate_on_submit():
-#         # issuer
-#         location = "./keys/{}.pem".format(issuer)
-#         private_key = read_key(location)
-#         uplink.call_contract(private_key=private_key, from_address=issuer,
-#                              contract_addr=addr,
-#                              method=method_name,
-#                              args=[VInt(42)])
-#     print(form.errors)
-#
-#     return redirect(url_for('public.contracts', addr=addr))
+@blueprint.route('/contracts/<addr>/call', methods=['POST'])
+def call_contract(addr):
+    method_name = request.form['method_name'].encode()
+    form = get_method_form(addr, method_name)
+    issuer = request.form['issuer']
+
+    if form.validate_on_submit():
+        # issuer
+        location = "./keys/{}.pem".format(issuer)
+        private_key = read_key(location)
+
+        arg_type = uplink.get_contract_callable(addr)[method_name]
+        args = [to_value(request.form[k[0]].encode(), k[1].encode()) for k in arg_type]
+
+        uplink.call_contract(private_key=private_key, from_address=issuer,
+                             contract_addr=addr,
+                             method=method_name,
+                             args=args)
+
+    else:
+        flash(form.errors, "success")
+
+    return redirect(url_for('public.contracts', addr=addr))
 
 
 @blueprint.route('/contracts/create', methods=['GET', 'POST'])
@@ -354,23 +386,21 @@ def get_contract_method_forms(addr):
 
 
 def get_method_form(addr, method_name, args=None):
-    args = {"fn_int": [["a", "int"]], "fn_float": [["b", "float"]], "fn_void": [["a", "void"]],
-            "fn_msg": [["c", "msg"]], "fn_account": [["a", "account"]],
-            "fn_bool": [["x", "bool"], ["b", "float"]],
-            "fn_asset": [["a", "asset"]], "fn_contract": [["e", "contract"]],
-            "never_called": [["a", "void"]]}[method_name]
+    if args is None:
+        args = uplink.get_contract_callable(addr)[method_name]
 
-    form = type(method_name, (FlaskForm,), {"method_name": HiddenField()})
+    form = type(method_name.encode(), (FlaskForm,),
+                {"method_name": HiddenField(), "Meta": type("Meta", (AutoAttrMeta,), {})})
 
     for (name, typ) in args:
         if typ == "int":
-            setattr(form, name, IntegerField(validators=[DataRequired()]))
+            setattr(form, name, IntegerField(validators=[InputRequired()]))
         elif typ == "float":
-            setattr(form, name, FloatField(validators=[DataRequired()]))
+            setattr(form, name, FloatField(validators=[InputRequired()]))
         elif typ in ["account", "asset", "contract", "msg"]:
-            setattr(form, name, TextField(validators=[DataRequired()]))
+            setattr(form, name, StringField(validators=[InputRequired()]))
         elif typ == "bool":
-            setattr(form, name, BooleanField(validators=[DataRequired()]))
+            setattr(form, name, BooleanField(validators=[InputRequired()], ))
 
     return form(method_name=method_name)
 
@@ -379,3 +409,15 @@ def get_keys():
     path = "./keys/"
     return [f.replace('.pem', '')
             for f in listdir(path) if isfile(join(path, f)) and not f == ".gitkeep"]
+
+
+def to_value(v, typ):
+    return {
+        "msg": VMsg,
+        "int": lambda x: VInt(int(x)),
+        "float": lambda x: VFloat(float(x)),
+        "bool": lambda x: VBool(True if x == "true" else False),
+        "account": VAccount,
+        "asset": VAsset,
+        "contract": VContract,
+    }[typ](v)

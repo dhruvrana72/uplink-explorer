@@ -1,0 +1,47 @@
+{% macro render_field(field) %}
+
+{{ field.label(class_="mdl-textfield__label")}}
+{{ field(**kwargs)|safe }}
+{% if field.errors %}
+<ul class=errors>
+    {% for error in field.errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endmacro %}
+
+
+{% macro render_account(addr) %}
+
+<a href="{{ url_for('public.accounts', addr = addr) }}">
+    <button id="{{addr}}" type="submit" name="submit"
+            value="{{addr}}" class="mdl-chip"
+            onclick="copyToClipboard('{{addr}}copy')">
+<span class="mdl-chip__contact mdl-color--blue mdl-color-text--white material-icons">
+account_circle
+</span>
+        <span class="mdl-chip__text">{{addr | shorten}}</span>
+    </button>
+    <div class="mdl-tooltip" data-mdl-for="{addr}}"
+         id="{{addr}}copy">
+        {{addr}}
+    </div>
+</a>
+{% endmacro %}
+
+{% macro render_asset(addr) %}
+<a href="{{ url_for('public.assets', addr = addr) }}">
+<span class="mdl-chip" id="{{addr | shorten}}">
+                                <span class="mdl-chip__contact mdl-color--green mdl-color-text--white material-icons">
+                                  credit_card
+                                </span>
+                                <span class="mdl-chip__text" onclick="copyToClipboard('{{addr | shorten}}copy')">{{addr | shorten}}</span>
+                                </span>
+    <div id="{{addr | shorten}}copy" class="mdl-tooltip"
+         data-mdl-for="{{addr | shorten}}">
+        {{addr}}
+    </div>
+</a>
+{% endmacro %}
