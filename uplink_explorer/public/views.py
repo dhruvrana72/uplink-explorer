@@ -306,6 +306,7 @@ def contracts(addr=None):
 
 
 @blueprint.route('/contracts/<addr>/call', methods=['POST'])
+@readonly_mode_check
 def call_contract(addr):
     method_name = request.form['method_name'].encode()
     form = get_method_form(addr, method_name)

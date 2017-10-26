@@ -282,6 +282,8 @@
 
                             </table>
                         </div>
+                        {% if not config.READONLY_MODE and asset %}
+
                         <form action="{{ url_for('public.transfer_asset', addr=asset.address)}}" method="post">
                             <div class="mdl-card__supporting-text">
 
@@ -295,9 +297,9 @@
                                         {% endif %}
 
                                         {% for key in asset.holdings %}
-                                            {% if key in keyfiles and not key == asset.issuer %}
-                                            <option class="mdl-menu__item" value="{{key}}">{{key}}</option>
-                                            {% endif %}
+                                        {% if key in keyfiles and not key == asset.issuer %}
+                                        <option class="mdl-menu__item" value="{{key}}">{{key}}</option>
+                                        {% endif %}
                                         {% endfor %}
                                     </select>
                                 </label>
@@ -327,6 +329,8 @@
                                 </button>
                             </div>
                         </form>
+                        {% endif %}
+
                     </div>
 
 
@@ -367,6 +371,7 @@ $(document).ready(function () {
     $("#binary").change(show_correct);
     $("#fractional").change(show_correct);
 });
+
 
 
 
