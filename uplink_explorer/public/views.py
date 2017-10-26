@@ -267,26 +267,27 @@ def create_asset():
     try:
         result, newasset_addr = uplink.create_asset(
             private_key, from_address, name, supply, asset_type, reference, issuer, precision)
+    
+        count = 0
+        while True:
+            count += 1
+            gevent.sleep(0.2)
+            if count > 60:
+                flash("failed to create account", 'error')
+            try:
+                asset_details = uplink.getasset(newasset_addr)
+                print("new asset successfully created " + asset_details.address)
+            except UplinkJsonRpcError:
+                continue
+            break
+
+        return redirect(url_for('public.assets', addr=newasset_addr))
+
     except UplinkJsonRpcError as result:
         print(result)
-        new_contract_addr = ""
+        newasset_addr = ""
         flash(result.response.get('contents').get('errorMsg'), 'error')
-
-    count = 0
-    while True:
-        count += 1
-        gevent.sleep(0.2)
-        if count > 60:
-            flash("failed to create account", 'error')
-        try:
-            asset_details = uplink.getasset(newasset_addr)
-            print("new asset successfully created " + asset_details.address)
-        except UplinkJsonRpcError:
-            continue
-        break
-
-    return redirect(url_for('public.assets', addr=newasset_addr))
-
+        return redirect(url_for('public.assets'))
 
 @blueprint.route('/contracts/')
 @blueprint.route('/contracts/<addr>', methods=['GET', 'POST'])
