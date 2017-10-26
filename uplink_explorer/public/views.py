@@ -347,8 +347,8 @@ def create_contract():
             res, new_contract_addr = uplink.create_contract(
                 private_key, str(issuer), str(script))
         except UplinkJsonRpcError as result:
-
             flash(result.response.get('contents').get('errorMsg'), 'error')
+            return redirect(url_for('public.contracts'))
 
     except IOError:
         flash("Invalid issuer address, no key found. Please try again", "error")

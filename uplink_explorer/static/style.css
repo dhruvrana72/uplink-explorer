@@ -54,6 +54,8 @@ button.mdl-chip {
     background: #ef5555;
     position: fixed;
     display: block;
+    white-space: pre-line;
+
     z-index: 223;
     padding: 20px;
     color: white;
