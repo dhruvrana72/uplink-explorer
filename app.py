@@ -9,7 +9,7 @@ from uplink_explorer.config import config_path, config, ProdConfig
 
 app = create_app(config_path)
 
-if config == ProdConfig:
+if config == ProdConfig and os.environ.get('SENTRY'):
     from uplink_explorer.extensions import sentry
 
     sentry.init_app(app)
