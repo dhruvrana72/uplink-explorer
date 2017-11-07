@@ -13,6 +13,7 @@ pytest == 3.0.6
 flask_wtf
 wtforms
 wtforms_html5
+
 # uplink-sdk-py
 -e git+https://github.com/adjoint-io/uplink-sdk-python/#egg=uplink-sdk-py
 

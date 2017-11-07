@@ -11,7 +11,7 @@ print("RPC listening on " + rpc_addr)
 # register extensions
 uplink = UplinkSession(addr=rpc_addr)
 
-if config == ProdConfig and os.environ['SENTRY']:
+if config == ProdConfig and os.environ.get('SENTRY'):
     from raven.contrib.flask import Sentry
 
     # XXX -- remove from open sourcing and put as env var

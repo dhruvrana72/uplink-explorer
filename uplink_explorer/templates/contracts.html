@@ -122,6 +122,10 @@
                                         {{method[field](class="mdl-checkbox__input") }}
                                         {{method[field].label(class="mdl-checkbox__label")}}
 
+
+                                        {% elif method[field].type == "DateTimeField"%}
+                                        {{method[field](type="datetime-local") }}
+                                        {{method[field].label(class="mdl-textfield__label")}}
                                         {% else %}
                                         {{method[field](class="mdl-textfield__input") }}
                                         {{method[field].label(class="mdl-textfield__label")}}
@@ -269,25 +273,11 @@ $(document).ready(function () {
         {{name}}.querySelector('.close').addEventListener('click', function() {
           {{name}}.close();
         });
+
     {% endfor %}
     {% endif %}
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 {% endblock %}

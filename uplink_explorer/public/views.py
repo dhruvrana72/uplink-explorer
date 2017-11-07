@@ -6,7 +6,7 @@ import json
 from flask_wtf import FlaskForm
 from wtforms import IntegerField, FloatField, BooleanField, DateTimeField, StringField, HiddenField
 from wtforms.validators import InputRequired
-
+from datetime import datetime
 import gevent
 from os import listdir
 from os.path import isfile, join
@@ -267,7 +267,7 @@ def create_asset():
     try:
         result, newasset_addr = uplink.create_asset(
             private_key, from_address, name, supply, asset_type, reference, issuer, precision)
-    
+
         count = 0
         while True:
             count += 1
@@ -288,6 +288,7 @@ def create_asset():
         newasset_addr = ""
         flash(result.response.get('contents').get('errorMsg'), 'error')
         return redirect(url_for('public.assets'))
+
 
 @blueprint.route('/contracts/')
 @blueprint.route('/contracts/<addr>', methods=['GET', 'POST'])
@@ -320,7 +321,6 @@ def call_contract(addr):
 
         arg_type = uplink.get_contract_callable(addr)[method_name]
         args = [to_value(request.form[k[0]].encode(), k[1].encode()) for k in arg_type]
-
         uplink.call_contract(private_key=private_key, from_address=issuer,
                              contract_addr=addr,
                              method=method_name,
@@ -402,7 +402,9 @@ def get_method_form(addr, method_name, args=None):
         elif typ in ["account", "asset", "contract", "msg"]:
             setattr(form, name, StringField(validators=[InputRequired()]))
         elif typ == "bool":
-            setattr(form, name, BooleanField(validators=[InputRequired()], ))
+            setattr(form, name, BooleanField(validators=[InputRequired()]))
+        elif typ == "datetime":
+            setattr(form, name, DateTimeField(validators=[InputRequired()], format='%Y-%m-%dT%H:%M'))
 
     return form(method_name=method_name)
 
@@ -420,6 +422,7 @@ def to_value(v, typ):
         "float": lambda x: VFloat(float(x)),
         "bool": lambda x: VBool(True if x == "true" else False),
         "account": VAccount,
+        "datetime": lambda raw: VDateTime(datetime.datetime.strptime(raw, '%Y-%m-%dT%H:%M')),
         "asset": VAsset,
         "contract": VContract,
     }[typ](v)
