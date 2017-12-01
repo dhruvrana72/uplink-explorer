@@ -280,7 +280,8 @@
                             </table>
                             {% endif %}
                         </div>
-                        {% if not config.READONLY_MODE and asset %} {{url_for('public.circulate_asset', addr=asset.address)}}
+                        {% if not config.READONLY_MODE and asset %}
+
                         <form action="{{url_for('public.circulate_asset', addr=asset.address)}}" method="post">
 
                             <div class="mdl-card__supporting-text">
