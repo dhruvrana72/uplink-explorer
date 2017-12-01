@@ -218,18 +218,22 @@ def transfer_asset(addr):
     actual_balance = int(
         str(balance) + str('0' * (asset.assetType.precision or 0)))
 
-    location = "./keys/{}.pem".format(from_address)
-    private_key = read_key(location)
-
-    receipt = uplink.transfer_asset(
-        private_key, from_address, to_address, actual_balance, addr)
-
-    gevent.sleep(1)  # :(
-
-    if receipt['tag'] == 'RPCRespOK':
-        flash("Transfer Successful", 'success')
+    if balance > asset.holdings.get(from_address, 0):
+        flash("You do not have enough holdings to transfer.")
     else:
-        flash("Transfer Failed. Did you circulate the account to yourself first?", 'error')
+        location = "./keys/{}.pem".format(from_address)
+        private_key = read_key(location)
+
+        receipt = uplink.transfer_asset(
+            private_key, from_address, to_address, actual_balance, addr)
+
+        gevent.sleep(1)  # :(
+
+        if receipt['tag'] == 'RPCRespOK':
+            flash("Transfer Successful", 'success')
+        else:
+            flash(
+                "Transfer Failed. Did you circulate the account to yourself first?", 'error')
     return redirect(url_for('public.assets', addr=addr))
 
 
