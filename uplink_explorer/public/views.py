@@ -215,7 +215,8 @@ def transfer_asset(addr):
     balance = int(request.form['balance'])
     asset = uplink.getasset(addr)
 
-    actual_balance = int(str(balance) + str('0' * (asset.assetType.precision or 0)))
+    actual_balance = int(
+        str(balance) + str('0' * (asset.assetType.precision or 0)))
 
     location = "./keys/{}.pem".format(from_address)
     private_key = read_key(location)
@@ -232,6 +233,32 @@ def transfer_asset(addr):
     return redirect(url_for('public.assets', addr=addr))
 
 
+@blueprint.route('/assets/<addr>/circulate/', methods=['POST'])
+@readonly_mode_check
+def circulate_asset(addr):
+    print("YESSSSSS")
+    from_address = request.form['from']
+    amount = int(request.form['amount'])
+    asset = uplink.getasset(addr)
+
+    actual_balance = int(
+        str(amount) + str('0' * (asset.assetType.precision or 0)))
+
+    location = "./keys/{}.pem".format(from_address)
+    private_key = read_key(location)
+
+    receipt = uplink.circulate_asset(
+        private_key, from_address, actual_balance, addr)
+
+    gevent.sleep(1)  # :(
+
+    if receipt['tag'] == 'RPCRespOK':
+        flash("Circulate Successful", 'success')
+    else:
+        flash("Circulate Failed. Did you create the asset with the right account?", 'error')
+    return redirect(url_for('public.assets', addr=addr))
+
+
 @blueprint.route('/assets/create', methods=['POST'])
 @readonly_mode_check
 def create_asset():
@@ -242,13 +269,14 @@ def create_asset():
 
     asset_type = request.form['asset_type']
     reference = request.form['reference']
-    precision = 0
+    precision = None
     issuer = request.form['issuer']
 
     if (str(asset_type) == "Discrete"):
         if int(supply) > maxNum:
             flash("{} given number cannot be larger than {}".format(
                 supply, maxNum), 'error')
+        supply = int(supply)
 
     if (str(asset_type) == "Fractional"):
         if int(supply) > maxNum:
@@ -320,7 +348,8 @@ def call_contract(addr):
         private_key = read_key(location)
 
         arg_type = uplink.get_contract_callable(addr)[method_name]
-        args = [to_value(request.form[k[0]].encode(), k[1].encode()) for k in arg_type]
+        args = [to_value(request.form[k[0]].encode(), k[1].encode())
+                for k in arg_type]
         uplink.call_contract(private_key=private_key, from_address=issuer,
                              contract_addr=addr,
                              method=method_name,
@@ -404,7 +433,8 @@ def get_method_form(addr, method_name, args=None):
         elif typ == "bool":
             setattr(form, name, BooleanField(validators=[InputRequired()]))
         elif typ == "datetime":
-            setattr(form, name, DateTimeField(validators=[InputRequired()], format='%Y-%m-%dT%H:%M'))
+            setattr(form, name, DateTimeField(
+                validators=[InputRequired()], format='%Y-%m-%dT%H:%M'))
 
     return form(method_name=method_name)
 

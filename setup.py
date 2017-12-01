@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name='Uplink Explorer',
-      version='0.1',
+      version='1.1',
       description='',
       url='http://github.com/adjoint-io/uplink-explorer',
       author='Adjoint: Stephen Diehl',

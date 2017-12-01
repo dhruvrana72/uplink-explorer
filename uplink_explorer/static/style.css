@@ -55,7 +55,6 @@ button.mdl-chip {
     position: fixed;
     display: block;
     white-space: pre-line;
-
     z-index: 223;
     padding: 20px;
     color: white;
@@ -84,6 +83,10 @@ button.mdl-chip {
         overflow-scrolling: touch;
         -webkit-overflow-scroll: touch;
     }
+}
+
+.full-table {
+    width: 100%;
 }
 
 
