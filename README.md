@@ -15,7 +15,9 @@ Install Directions : [https://www.youtube.com/watch?v=VeWkuNf83Kw](https://www.y
 
 <center>
   <a href="https://www.youtube.com/watch?v=VeWkuNf83Kw">
-    <img src="https://img.youtube.com/vi/VeWkuNf83Kw/0.jpg"/>
+    <p align="center">
+      <img src="https://img.youtube.com/vi/VeWkuNf83Kw/0.jpg"/>
+    </p>
   </a>
 </center>
 
