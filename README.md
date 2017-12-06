@@ -11,6 +11,8 @@ Block Explorer
 Installation
 ------------
 
+[![Install Directions](https://img.youtube.com/vi/VeWkuNf83Kw/0.jpg)](https://www.youtube.com/watch?v=VeWkuNf83Kw)
+
 ```
   git clone git@github.com:adjoint-io/uplink-explorer.git && cd uplink explorer
   virtualenv -p /usr/bin/python2.7 venv
