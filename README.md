@@ -14,7 +14,9 @@ Installation
 Install Directions : [https://www.youtube.com/watch?v=VeWkuNf83Kw](https://www.youtube.com/watch?v=VeWkuNf83Kw)
 
 <center>
-[![Install Directions](https://img.youtube.com/vi/VeWkuNf83Kw/0.jpg)](https://www.youtube.com/watch?v=VeWkuNf83Kw)
+  <a href="https://www.youtube.com/watch?v=VeWkuNf83Kw">
+    <img src="https://img.youtube.com/vi/VeWkuNf83Kw/0.jpg"/>
+  </a>
 </center>
 
 ```bash
