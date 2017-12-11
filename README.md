@@ -31,10 +31,16 @@ $ pip install -r requirements.txt
 Usage
 -----
 
-Local Development ( with reloader )
+Video tutorial series:
 
-```
-ENV=DEV READONLY=FALSE python app.py
+* [Creating Accounts](https://www.youtube.com/watch?v=pAO8DOOOuWw&index=3&list=PLssH0Xui89Ex2ou_U96t8l7Nk04ycr5zV)
+* [Creating Assets](https://www.youtube.com/watch?v=XROH210vC4M&index=1&list=PLssH0Xui89Ex2ou_U96t8l7Nk04ycr5zV)
+* [Creating Contracts](https://www.youtube.com/watch?v=cu2BXQFOj7U&index=2&list=PLssH0Xui89Ex2ou_U96t8l7Nk04ycr5zV)
+
+To run the web application locally start the webserver and [Uplink node](https://github.com/adjoint-io/uplink#running-a-node).
+
+```bash
+$ ENV=DEV READONLY=FALSE python app.py
 ```
 
 
@@ -42,13 +48,13 @@ Testing
 -------
 To run the test suite:
 
-```
-  pytest -s -vv tests/
+```bash
+$ pytest -s -vv tests/
 ```
 
 License
 -------
 
-Copyright 2017 Adjoint Inc
+Copyright 2017-2018 Adjoint Inc
 
 Released under Apache 2.0.
