@@ -75,13 +75,11 @@
 
                         <h6>Full Address</h6>
                         {{account.address}}<br/>
+                        <h6>Metadata</h6>
                         <ul class="demo-list-two mdl-list">
-                            {% for meta in account.metadata %}
-                            <li class="mdl-list__item mdl-list__item--two-line">
-                                <span class="mdl-list__item-primary-content">
-                                <span>{{meta}}</span>
-                                <!-- <span class="mdl-list__item-sub-title">{{value}}</span> -->
-                                </span>
+                            {% for key, value in account.metadata.iteritems() %}
+                            <li>
+                                <span>{{key}}: {{value}}</span>
                             </li>
                             {% else %}
                             <li>No Metadata Available</li>
