@@ -8,6 +8,8 @@ Block Explorer
 
 [![CircleCI](https://circleci.com/gh/adjoint-io/uplink-explorer.svg?style=svg&circle-token=8c789d75f942ee92eef733755c4975968df51485)](https://circleci.com/gh/adjoint-io/uplink-explorer)
 
+Uplink Explorer is a minimal web portal for interacting with the Uplink distributed ledger. It can be used to inspect the state of the ledger history, introspect transactions,and construct assets, accounts, and contracts. Uplink Explorer also serves as a minimal application for client partners and stakeholders to build complex business networks, trading systems, exchanges and settlement networks on top as a demonstrators of the Adjoint Uplink solution.
+
 Installation
 ------------
 
