@@ -16,5 +16,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ENV=PROD gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
+CMD ENV=PROD READONLY=FALSE gunicorn app:app -b 0.0.0.0:80 --workers=5 -k gevent
 
