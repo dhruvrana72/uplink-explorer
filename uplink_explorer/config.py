@@ -13,7 +13,7 @@ class Config(object):
 
 class ProdConfig(Config):
     """Production configuration."""
-    READONLY_MODE = True  # hardcode until we add this to the envs for test net
+    READONLY_MODE = (os.environ.get('READONLY') == "TRUE")
     DEBUG = False
     SECRET_KEY = 'aaljngtfshafhffgdfg32897tb8c94m3w390sand'
 
