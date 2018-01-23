@@ -127,6 +127,23 @@ def blocks():
     return render_template('blocks.html', blocks=uplink.blocks())
 
 
+@blueprint.route('/blocks', methods=['POST'])
+def query():
+    query = request.form['query']
+
+    print(query)
+    results = None
+    try:
+        results = json.dumps(uplink.query(
+            query), sort_keys=True, indent=4, separators=(',', ': '))
+
+    except UplinkJsonRpcError:
+        flash("malformed query", "error")
+        print(results)
+
+    return render_template('blocks.html', blocks=uplink.blocks(), query_results=results)
+
+
 @blueprint.route('/blocks/<block_id>', methods=['GET'])
 def transactions(block_id):
     """Present a table of transactions"""

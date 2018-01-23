@@ -29,8 +29,7 @@
                                     {{block.header.origin}}
                                 </div>
                             </td>
-                            <td id="{{block.header.prevHash | shorten}}"
-                              class="mdl-data-table__cell--non-numeric">{{block.header.prevHash | shorten}}
+                            <td id="{{block.header.prevHash | shorten}}" class="mdl-data-table__cell--non-numeric">{{block.header.prevHash | shorten}}
                                 <div class="mdl-tooltip" data-mdl-for="{{block.header.prevHash | shorten}}">
                                     {{block.header.prevHash}}
                                 </div>
@@ -53,22 +52,37 @@
                 </table>
             </div>
             <div class="mdl-cell mdl-cell--4-col  mdl-layout--large-screen-only">
-                <div class="demo-card-wide mdl-card mdl-shadow--2dp">
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Community Edition</h2>
-                    </div>
-                    <div class="mdl-card__supporting-text">
-                        Welcome to the Block Explorer. This is a simple application to allow you to interact with blocks and transactions on the Uplink testnet.
 
+                <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/pAO8DOOOuWw?list=PLssH0Xui89Ex2ou_U96t8l7Nk04ycr5zV" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+                <br/>
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Queries</h2>
+                </div>
+                <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__supporting-text">
+                        Example Query Commands:
+                        <ul>
+                            <li>QUERY transactions WHERE tx_type = 'CreateAccount';</li>
+                            <li>QUERY assets WHERE assetType = 'Discrete';</li>
+                        </ul>
+
+                        <form method="POST" action="{{ url_for('public.query')}}">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" id="query" name="query">
+                                <label class="mdl-textfield__label " for="query ">Query Uplink</label>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mdl-card__menu">
-                        <a href="http://github.com/adjoint-io" target="_blank" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                            <i class="material-icons">code</i>
-                        </a>
-                    </div>
+                    {% if query_results %}
+                    <textarea class="mdl-textfield__input" rows="30" type="text" id="json-pretty" readonly>
+                        {{ query_results}}
+                    </textarea> {% else %} {% endif %}
 
                 </div>
             </div>
+
         </div>
 
     </div>

@@ -4,6 +4,10 @@
     width: 512px;
 }
 
+.logo {
+    width: 100px;
+}
+
 .demo-card-wide>.mdl-card__title {
     color: #333;
     height: 176px;
@@ -62,11 +66,18 @@ button.mdl-chip {
 }
 
 #script {
-    /*padding: 20px;*/
     font-family: monospace;
     font-size: 12px;
     color: white;
     background: #484848;
+    padding: 20px;
+}
+
+#json-pretty {
+    font-family: monospace;
+    color: #484848;
+    font-size: 12px;
+    background: #FFF;
 }
 
 .view-script {
