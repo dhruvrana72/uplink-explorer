@@ -20,7 +20,7 @@ from flask import redirect, url_for, flash
 from uplink import *
 from wtforms_html5 import AutoAttrMeta
 from uplink_explorer.extensions import uplink
-
+from subprocess import Popen, PIPE, STDOUT
 # this number should go somewhere better
 maxNum = 922337203685.4775807
 
@@ -390,35 +390,50 @@ def create_contract():
     issuer = request.form['issuer']
     new_contract_addr = ""
 
-    try:
-        location = "./keys/{}.pem".format(issuer)
-        private_key = read_key(location)
-
+    if request.form['submit'] == 'create_contract':
         try:
-            res, new_contract_addr = uplink.create_contract(
-                private_key, str(issuer), str(script))
-        except UplinkJsonRpcError as result:
-            flash(result.response.get('contents').get('errorMsg'), 'error')
-            return redirect(url_for('public.contracts'))
+            location = "./keys/{}.pem".format(issuer)
+            private_key = read_key(location)
 
-    except IOError:
-        flash("Invalid issuer address, no key found. Please try again", "error")
+            try:
+                res, new_contract_addr = uplink.create_contract(
+                    private_key, str(issuer), str(script))
+            except UplinkJsonRpcError as result:
+                flash(result.response.get('contents').get('errorMsg'), 'error')
+                return redirect(url_for('public.contracts'))
 
-    count = 0
-    while True:
-        count += 1
-        gevent.sleep(0.2)
+        except IOError:
+            flash("Invalid issuer address, no key found. Please try again", "error")
 
-        if (count > 60):
-            flash("failed to create contract", 'error')
-        try:
-            contract = uplink.getcontract(new_contract_addr)
-            print("new contract successfully created " + contract.address)
-        except UplinkJsonRpcError:
-            continue
-        break
+        count = 0
+        while True:
+            count += 1
+            gevent.sleep(0.2)
 
-    return redirect(url_for('public.contracts', addr=new_contract_addr))
+            if (count > 60):
+                flash("failed to create contract", 'error')
+            try:
+                contract = uplink.getcontract(new_contract_addr)
+                print("new contract successfully created " + contract.address)
+            except UplinkJsonRpcError:
+                continue
+            break
+
+    if request.form['submit'] == 'simulate_contract':
+        filename = "./script.fcl"
+        with open(filename, "wb") as file:
+            file.write(script)
+
+        p = Popen(['uplink', 'scripts', 'repl', '--json', './script.fcl'],
+                  stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+
+        message = p.communicate()[0]
+        listed = message.split('\n')
+        listed = listed[1:-1]  # remove first and last to get signatures
+
+        flash(message)
+
+    return redirect(url_for('public.contracts', addr=new_contract_addr, simulation=listed))
 
 
 @blueprint.route('/transactions/pending', methods=['GET', 'POST'])

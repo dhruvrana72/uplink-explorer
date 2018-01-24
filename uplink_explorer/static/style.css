@@ -31,7 +31,10 @@
 .mdl-tooltip {
     max-width: 100% !important;
 }
-
+/*.mdl-snackbar.mdl-js-snackbar.mdl-snackbar--active*/
+.mdl-snackbar__text{
+  white-space: pre-wrap;
+}
 button.mdl-chip {
     cursor: pointer;
     font-family: monospace;

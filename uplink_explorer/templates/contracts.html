@@ -1,76 +1,73 @@
-{% extends "layout.html" %} {% block body %}
-{% from "_helpers.html" import render_account %}
+{% extends "layout.html" %} {% block body %} {% from "_helpers.html" import render_account %}
 
 <main class="mdl-layout__content">
     <div class="page-content">
         <br>
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--7-col mobile-table-grid">
+            <div class="mdl-cell mdl-cell--5-col mobile-table-grid">
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
-                    <tr>
-                        <th class="mdl-data-table__cell--non-numeric">Address</th>
-                        <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
-                        <th class="mdl-data-table__cell--non-numeric">Owner</th>
-                        <th class="mdl-data-table__cell--non-numeric">State</th>
-                        <th class="mdl-data-table__cell--non-numeric">View Contract</th>
-                    </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                            <th class="mdl-data-table__cell--non-numeric">Owner</th>
+                            <th class="mdl-data-table__cell--non-numeric">State</th>
+                            <th class="mdl-data-table__cell--non-numeric">View Contract</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% if contracts is not none %} {% for con in contracts %}
+                        {% if contracts is not none %} {% for con in contracts %}
 
-                    <tr {% if con.address==contract.address %} class="is-selected" {% endif %}>
-                        <td class="mdl-data-table__cell--non-numeric">
+                        <tr {% if con.address==contract.address %} class="is-selected" {% endif %}>
+                            <td class="mdl-data-table__cell--non-numeric">
                                 <span class="mdl-chip" id="{{con.address | shorten}}">
                                 <span class="mdl-chip__contact mdl-color--amber mdl-color-text--white material-icons">
                                   insert_drive_file
                                 </span>
                                 <span class="mdl-chip__text" onclick="copyToClipboard('{{con.address | shorten}}copy')">{{con.address | shorten}}</span>
                                 </span>
-                            <div id="{{con.address | shorten}}copy" class="mdl-tooltip"
-                                 data-mdl-for="{{con.address | shorten}}">
-                                {{con.address}}
-                            </div>
-                        </td>
-                        <td class="mdl-data-table__cell--non-numeric">{{con.timestamp | datetimeformat}}</td>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            {{ render_account(con.owner) }}
+                                <div id="{{con.address | shorten}}copy" class="mdl-tooltip" data-mdl-for="{{con.address | shorten}}">
+                                    {{con.address}}
+                                </div>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{con.timestamp | datetimeformat}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {{ render_account(con.owner) }}
 
-                        </td>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            {{ con.state }}
-                        </td>
-                        <td>
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {{ con.state }}
+                            </td>
+                            <td>
 
-                            <a href="{{ url_for('public.contracts', addr = con.address) }}">
-                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+                                <a href="{{ url_for('public.contracts', addr = con.address) }}">
+                                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                                     <i class="material-icons">view_list</i>
                                 </button>
-                            </a>
-                        </td>
+                                </a>
+                            </td>
 
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
-                    </tr>
-                    {% endfor %} {% else %}
-                    <tr>
-                        <td>No contracts created yet</td>
-                    </tr>
-                    {% endif %}
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Nothing yet</td>
+                        </tr>
+                        {% endfor %} {% else %}
+                        <tr>
+                            <td>No contracts created yet</td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
 
 
             </div>
             {% if contract is not none %}
-            <div class="mdl-cell mdl-cell--5-col mobile-table-grid">
+            <div class="mdl-cell mdl-cell--7-col mobile-table-grid">
                 <div class="demo-card-square mdl-card mdl-shadow--2dp mobile-table-grid">
                     <div class="mdl-card__title">
                         <h2 class="mdl-card__title-text">Contract Address:
-                            <button id="{{contract.address}}" type="submit" name="submit" value="{{contract.address}}"
-                                    class="mdl-chip" onclick="copyToClipboard('{{contract.address}}copy')">
+                            <button id="{{contract.address}}" type="submit" name="submit" value="{{contract.address}}" class="mdl-chip" onclick="copyToClipboard('{{contract.address}}copy')">
                                       <span class="mdl-chip__contact mdl-color--amber mdl-color-text--white material-icons">
                                       insert_drive_file
                                       </span>
@@ -86,14 +83,12 @@
 
                         {% if forms %}
 
-                        <button id="demo-menu-lower-right"
-                                class="mdl-button mdl-js-button   mdl-button--raised mdl-js-ripple-effect">
+                        <button id="demo-menu-lower-right" class="mdl-button mdl-js-button   mdl-button--raised mdl-js-ripple-effect">
                             Call Method
                         </button>
 
 
-                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                            for="demo-menu-lower-right">
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-right">
                             {% for name, method in forms.items() %}
 
                             <li id="show-{{name}}" class="mdl-menu__item"> {{ method.method_name.data }}</li>
@@ -109,33 +104,14 @@
 
                                 <div class="mdl-dialog__content">
 
-                                    {% for field in method._fields %}
-                                    {% if not field == "csrf_token" and not method[field].data%}
+                                    {% for field in method._fields %} {% if not field == "csrf_token" and not method[field].data%}
                                     <div class="mdl-textfield mdl-js-textfield">
-                                        {% if method[field].type == "IntegerField" or method[field].type == "FloatField"
-                                        %}
-
-                                        {{method[field](type="number", class="mdl-textfield__input") }}
-                                        {{method[field].label(class="mdl-textfield__label")}}
-
-                                        {% elif method[field].type == "BooleanField"%}
-                                        {{method[field](class="mdl-checkbox__input") }}
-                                        {{method[field].label(class="mdl-checkbox__label")}}
-
-
-                                        {% elif method[field].type == "DateTimeField"%}
-                                        {{method[field](type="datetime-local") }}
-                                        {{method[field].label(class="mdl-textfield__label")}}
-                                        {% else %}
-                                        {{method[field](class="mdl-textfield__input") }}
-                                        {{method[field].label(class="mdl-textfield__label")}}
-                                        {% endif %}
+                                        {% if method[field].type == "IntegerField" or method[field].type == "FloatField" %} {{method[field](type="number", class="mdl-textfield__input") }} {{method[field].label(class="mdl-textfield__label")}} {% elif method[field].type == "BooleanField"%} {{method[field](class="mdl-checkbox__input")
+                                        }} {{method[field].label(class="mdl-checkbox__label")}} {% elif method[field].type == "DateTimeField"%} {{method[field](type="datetime-local") }} {{method[field].label(class="mdl-textfield__label")}} {% else %}
+                                        {{method[field](class="mdl-textfield__input") }} {{method[field].label(class="mdl-textfield__label")}} {% endif %}
 
                                     </div>
-                                    {% endif %}
-
-                                    {% endfor %}
-                                    {{ method.hidden_tag() }}
+                                    {% endif %} {% endfor %} {{ method.hidden_tag() }}
                                 </div>
                                 <label>
                                     <div class="dropdown-issuer-label">Select Caller</div>
@@ -155,8 +131,7 @@
 
                         </dialog>
 
-                        {% endfor %}
-                        {% else %}
+                        {% endfor %} {% else %}
                         <p> No methods callable in current state</p>
                         {% endif %}
 
@@ -164,25 +139,25 @@
 
                             <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                                 <thead>
-                                <tr>
-                                    <th class="mdl-data-table__cell--non-numeric">Key</th>
+                                    <tr>
+                                        <th class="mdl-data-table__cell--non-numeric">Key</th>
 
-                                    <th class="mdl-data-table__cell--non-numeric">Values</th>
-                                </tr>
+                                        <th class="mdl-data-table__cell--non-numeric">Values</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {% for key, value in contract.storage.iteritems() %}
-                                <tr>
-                                    {% if not value.tag is none %}
-                                    <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
-                                    <td>{{value | remove_extra_value}}</td>
-                                    {% else %} {% endif %}
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td>Nothing in storage</td>
-                                </tr>
-                                {% endfor %}
+                                    {% for key, value in contract.storage.iteritems() %}
+                                    <tr>
+                                        {% if not value.tag is none %}
+                                        <td class="mdl-data-table__cell--non-numeric">{{key}}</td>
+                                        <td>{{value | remove_extra_value}}</td>
+                                        {% else %} {% endif %}
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td>Nothing in storage</td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -197,10 +172,8 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
-
-            {% if not config.READONLY_MODE and not contract%}
-            <div class="mdl-cell mdl-cell--5-col mobile-table-grid">
+            {% endif %} {% if not config.READONLY_MODE and not contract%}
+            <div class="mdl-cell mdl-cell--7-col mobile-table-grid">
                 <div class="demo-card-square mdl-card mdl-shadow--2dp">
                     <div class="mdl-card__title">
                         <h2 class="mdl-card__title-text">Create New Contract</h2>
@@ -228,9 +201,11 @@
                         </label>
 
                         <div class="mdl-card__actions mdl-card--border">
-                            <button type="submit" name="submit" value="create_contract"
-                                    class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                            <button type="submit" name="submit" value="create_contract" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
                                 Create Contract
+                            </button>
+                            <button type="submit" name="submit" value="simulate_contract" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                Simulate
                             </button>
                         </div>
                     </form>
@@ -255,29 +230,26 @@
 
 </main>
 <script>
-$(document).ready(function () {
-    {% if forms is not none %}
-    {% for name, method in forms.items() %}
+    $(document).ready(function() {
+        {% if forms is not none %}
+          {% for name, method in forms.items() %}
 
         var {{name}} = document.querySelector('#{{name}}');
 
         var showDialogButton = document.querySelector('#show-{{name}}');
-        if (! {{name}}.showModal) {
-          dialogPolyfill.registerDialog({{name}});
+        if (!{{ name}}.showModal) {
+            dialogPolyfill.registerDialog({{name}});
         }
 
         showDialogButton.addEventListener('click', function() {
-          {{name}}.showModal();
+            {{name}}.showModal();
         });
 
         {{name}}.querySelector('.close').addEventListener('click', function() {
-          {{name}}.close();
+            {{name}}.close();
         });
 
-    {% endfor %}
-    {% endif %}
-
-});
-
+        {% endfor %} {% endif %}
+    });
 </script>
 {% endblock %}
