@@ -11,6 +11,8 @@
                             <th class="mdl-data-table__cell--non-numeric">Public Key</th>
                             <th class="mdl-data-table__cell--non-numeric">Timezone</th>
                             <th class="mdl-data-table__cell--non-numeric">Address</th>
+<th class="mdl-data-table__cell--non-numeric">Name</th>
+<th class="mdl-data-table__cell--non-numeric">Kind</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +40,9 @@
 
 
                             </td>
+<td class="mdl-data-table__cell--non-numeric">{{acc.metadata.name}}</td>
+<td class="mdl-data-table__cell--non-numeric">{{acc.metadata.kind}}</td>
+
                         </tr>
                         {% else %}
                         <tr>
